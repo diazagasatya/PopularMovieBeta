@@ -2,7 +2,6 @@ package com.example.android.popularmoviebeta.Utilities;
 
 import android.net.Uri;
 import android.util.Log;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -23,14 +22,18 @@ public class NetworkUtils {
 
     /* API URL FORMATTING */
     private static final String VERSION = "3"; // Current API version available
-    private static final String MOVIE = "movie"; // Movie path
-    private static final String NOW_PLAYING = "now_playing"; // Shows now playing
+    private static final String DISCOVER_PATH = "discover"; // Movie path
+    private static final String MOVIE_PATH = "movie"; // Shows now playing
+    private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
     private static final String LANGUAGE = "en-US"; // Show in English
+    private static final String SORT_BY = "sort_by";
     private static final String PAGE_PARAM = "page";
     private static final String PAGE_NUMBER = "1"; // Number of page shows
-    private static final String API_KEY_PARAM = "api_key";
-
+    private static final String RELEASE_YEAR_PARAM = "primary_release_year";
+    private static final String RELEASE_YEAR = "2018"; // Show recent movies played
+    private static final String SAME_DAY_RELEASE = "primary_release_date";
+    private static final String TODAYS_DATE = java.time.LocalDate.now().toString(); // Restrict upcoming movies
 
     // Base URL for movieDB API
     private static final String BASE_URL_MOVIE = "https://api.themoviedb.org";
@@ -39,16 +42,19 @@ public class NetworkUtils {
      * Build the URL needed to grab JSON data from movieDB API.
      * @return the newly built URL
      */
-    public static URL buildURL() {
+    public static URL buildURL(String sortBy) {
 
         // Build URI for http request
         Uri uriBuilt = Uri.parse(BASE_URL_MOVIE).buildUpon()
                 .appendPath(VERSION)
-                .appendPath(MOVIE)
-                .appendPath(NOW_PLAYING)
-                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendPath(DISCOVER_PATH)
+                .appendPath(MOVIE_PATH)
+                .appendQueryParameter(API_KEY_PARAM,API_KEY)
                 .appendQueryParameter(LANGUAGE_PARAM, LANGUAGE)
-                .appendQueryParameter(PAGE_PARAM,PAGE_NUMBER)
+                .appendQueryParameter(SORT_BY, sortBy)
+                .appendQueryParameter(PAGE_PARAM, PAGE_NUMBER)
+                .appendQueryParameter(RELEASE_YEAR_PARAM,RELEASE_YEAR)
+                .appendQueryParameter(SAME_DAY_RELEASE,TODAYS_DATE)
                 .build();
 
         // Build URL from URI

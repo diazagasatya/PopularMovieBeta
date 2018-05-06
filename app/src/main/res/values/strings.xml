@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PopularMovieBeta</string>
+
+    <!-- SORT MOVIES -->
+    <string name="popularity_desc">popularity.desc</string>
+    <string name="highest_rated">vote_average.desc</string>
+
 </resources>
