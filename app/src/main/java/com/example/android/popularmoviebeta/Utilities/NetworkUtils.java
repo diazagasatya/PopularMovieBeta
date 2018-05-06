@@ -82,7 +82,11 @@ public class NetworkUtils {
         try {
             InputStream in = urlConnection.getInputStream();
 
+            // Tokenize String
             Scanner scanner = new Scanner(in);
+
+            // Force the scanner to read the entire input stream
+            scanner.useDelimiter("\\A");
 
             boolean hasInputs = scanner.hasNext();
 

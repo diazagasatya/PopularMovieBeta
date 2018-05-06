@@ -16,6 +16,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         URL url = NetworkUtils.buildURL();
-
     }
 }
