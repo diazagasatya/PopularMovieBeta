@@ -16,12 +16,18 @@ import com.squareup.picasso.Picasso;
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
+    // The number of items that will be in the view holder
     private int mNumberOfItemsCount;
+
+    // The current application context
     private Context mContext;
+
+    // TODO (2) Add cursor from main activity to bind data
 
     /**
      * Populate the number of items needed to be created for inflating to layout
      * @param numberOfItems     number of items will be needed to be created
+     * @param context           application current context
      */
     public MovieAdapter(int numberOfItems, Context context) {
         mContext = context;
@@ -59,7 +65,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
-
+        // TODO (1) BIND DATA HERE
     }
 
     /**

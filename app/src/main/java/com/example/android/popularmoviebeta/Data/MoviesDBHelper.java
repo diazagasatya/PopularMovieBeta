@@ -39,6 +39,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                 + MoviesContract.PopularMovie.COL_RATINGS + " TEXT NOT NULL"
                 + MoviesContract.PopularMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
                 + " );";
+
         final String CREATE_HIGHEST_RATED_MOVIE_TABLE = "CREATE TABLE "
                 + MoviesContract.HighestRatedMovie.TABLE_NAME + " ("
                 + MoviesContract.HighestRatedMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
