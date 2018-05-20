@@ -20,6 +20,11 @@
             </intent-filter>
         </activity>
 
+        <!-- register the custom MoviesContentProvider -->
+        <provider
+            android:authorities="com.example.android.popularmoviebeta"
+            android:name="com.example.android.popularmoviebeta.Data.MoviesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

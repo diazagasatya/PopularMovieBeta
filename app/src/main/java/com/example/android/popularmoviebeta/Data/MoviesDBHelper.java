@@ -68,7 +68,6 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
          */
         if(newVersion > oldVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.PopularMovie.TABLE_NAME);
-            onCreate(db);
             db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.HighestRatedMovie.TABLE_NAME);
             onCreate(db);
         }
