@@ -66,10 +66,88 @@ public class MoviesProvider extends ContentProvider {
         return true;
     }
 
+    /**
+     * Will build a SQL Query to the database and retrieve the appropriate data as a cursor
+     * to populate into the UI
+     * @param uri           The URI of the Query
+     * @param projection    Columns that wanted to be returned
+     * @param selection     Rows that wanted to be returned
+     * @param selectionArgs Specific rows that wanted to be returned
+     * @param sortOrder     The order of the data
+     * @return resultCursor
+     */
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+
+        // Get the reference to the movie database
+        final SQLiteDatabase db = mMoviesDatabase.getReadableDatabase();
+
+        Cursor resultCursor;
+
+        // Use switch statement to return the cursor from the SQL query
+        switch (sUriMatcher.match(uri)) {
+
+            // CASE 1 FOR ALL ROWS IN POPULAR TABLE
+            case POPULAR_PATH:
+
+                // Retrieve the full Popular Movie table
+                resultCursor = db.query(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            // CASE 2 FOR ALL ROWS IN HIGHEST RATED TABLE
+            case HIGHEST_RATED_PATH:
+
+                // Retrieve the full Highest Rated Movie table
+                resultCursor = db.query(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            // CASE 3 FOR A SINGLE MOVIE IN POPULAR TABLE
+            case POPULAR_PATH_WITH_ID:
+
+                // Retrieve the full Popular Movie table
+                resultCursor = db.query(MoviesContract.PopularMovie.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            // CASE 3 FOR A SINGLE MOVIE IN POPULAR TABLE
+            case HIGHEST_RATED_WITH_ID:
+
+                // Retrieve the full Popular Movie table
+                resultCursor = db.query(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown URI " + uri);
+        }
+
+        // Notify the changes to content resolver
+        resultCursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        return resultCursor;
     }
 
     /**
