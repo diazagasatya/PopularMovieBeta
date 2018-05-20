@@ -32,23 +32,23 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String CREATE_POPULAR_MOVIE_TABLE = "CREATE TABLE "
                 + MoviesContract.PopularMovie.TABLE_NAME + " ("
-                + MoviesContract.PopularMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
-                + MoviesContract.PopularMovie.COL_ORIGINAL_TITLE + " TEXT NOT NULL"
-                + MoviesContract.PopularMovie.COL_MOVIE_POSTER + " TEXT NOT NULL"
-                + MoviesContract.PopularMovie.COL_MOVIE_SYSNOPSIS + " TEXT NOT NULL"
-                + MoviesContract.PopularMovie.COL_RATINGS + " TEXT NOT NULL"
+                + MoviesContract.PopularMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MoviesContract.PopularMovie.COL_ORIGINAL_TITLE + " TEXT NOT NULL, "
+                + MoviesContract.PopularMovie.COL_MOVIE_POSTER + " TEXT NOT NULL, "
+                + MoviesContract.PopularMovie.COL_MOVIE_SYSNOPSIS + " TEXT NOT NULL, "
+                + MoviesContract.PopularMovie.COL_RATINGS + " TEXT NOT NULL, "
                 + MoviesContract.PopularMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
-                + " );";
+                + ");";
 
         final String CREATE_HIGHEST_RATED_MOVIE_TABLE = "CREATE TABLE "
                 + MoviesContract.HighestRatedMovie.TABLE_NAME + " ("
-                + MoviesContract.HighestRatedMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
-                + MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE + " TEXT NOT NULL"
-                + MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER + " TEXT NOT NULL"
-                + MoviesContract.HighestRatedMovie.COL_MOVIE_SYSNOPSIS + " TEXT NOT NULL"
-                + MoviesContract.HighestRatedMovie.COL_RATINGS + " TEXT NOT NULL"
+                + MoviesContract.HighestRatedMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE + " TEXT NOT NULL, "
+                + MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER + " TEXT NOT NULL, "
+                + MoviesContract.HighestRatedMovie.COL_MOVIE_SYSNOPSIS + " TEXT NOT NULL, "
+                + MoviesContract.HighestRatedMovie.COL_RATINGS + " TEXT NOT NULL, "
                 + MoviesContract.HighestRatedMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
-                + " );";
+                + ");";
 
         sqLiteDatabase.execSQL(CREATE_POPULAR_MOVIE_TABLE);
         sqLiteDatabase.execSQL(CREATE_HIGHEST_RATED_MOVIE_TABLE);
