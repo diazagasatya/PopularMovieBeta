@@ -18,11 +18,8 @@ import com.example.android.popularmoviebeta.Sync.MoviesSyncTask;
 public class MainActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    // Number of movies that will be inserted to the view holder
-    private static final int NUM_OF_MOVIES = 25;
-
     // Number of span in grid
-    private static final int NUM_OF_SPAN = 4;
+    private static final int NUM_OF_SPAN = 2;
 
     // Movie Adapter
     private MovieAdapter mMovieAdapter;
