@@ -23,8 +23,9 @@ public class NetworkUtils {
 
     /* API URL FORMATTING */
     private static final String VERSION = "3"; // Current API version available
-    private static final String DISCOVER_PATH = "popular"; // Discover Path
+    private static final String POPULAR_PATH = "popular"; // Popular Path
     private static final String MOVIE_PATH = "movie"; // Shows Movie Path
+    private static final String HIGHEST_RATED_PATH = "top_rated"; // Top Rated Path
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
     private static final String LANGUAGE = "en-US"; // Show in English
@@ -35,7 +36,7 @@ public class NetworkUtils {
     private static final String BASE_URL_MOVIE = "https://api.themoviedb.org";
 
     /**
-     * Build the URL needed to grab JSON data from movieDB API.
+     * Build the URL needed to grab popular movies JSON data from movieDB API.
      * @return the newly built URL
      */
     public static URL buildUrlPopular() {
@@ -44,7 +45,7 @@ public class NetworkUtils {
         Uri uriBuilt = Uri.parse(BASE_URL_MOVIE).buildUpon()
                 .appendPath(VERSION)
                 .appendPath(MOVIE_PATH)
-                .appendPath(DISCOVER_PATH)
+                .appendPath(POPULAR_PATH)
                 .appendQueryParameter(API_KEY_PARAM,API_KEY)
                 .appendQueryParameter(LANGUAGE_PARAM, LANGUAGE)
                 .appendQueryParameter(PAGE_PARAM, PAGE_NUMBER)
@@ -64,6 +65,39 @@ public class NetworkUtils {
         }
 
         return url;
+    }
+
+    /**
+     * Build the URL needed to grab highest rated movies JSON data from movieDB API.
+     * @return the newly built URL
+     */
+    public static URL buildUrlHighestRated() {
+
+        // Build URI for http request
+        Uri uriBuilt = Uri.parse(BASE_URL_MOVIE).buildUpon()
+                .appendPath(VERSION)
+                .appendPath(MOVIE_PATH)
+                .appendPath(HIGHEST_RATED_PATH)
+                .appendQueryParameter(API_KEY_PARAM,API_KEY)
+                .appendQueryParameter(LANGUAGE_PARAM, LANGUAGE)
+                .appendQueryParameter(PAGE_PARAM, PAGE_NUMBER)
+                .build();
+
+        // Build URL from URI
+        URL url = null;
+
+        try {
+            url = new URL(uriBuilt.toString());
+
+            // Print the Url for debugging purposes
+            Log.v(TAG, url.toString());
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+
     }
 
     /**

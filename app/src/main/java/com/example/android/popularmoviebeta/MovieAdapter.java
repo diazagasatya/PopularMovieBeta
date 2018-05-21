@@ -1,6 +1,7 @@
 package com.example.android.popularmoviebeta;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.popularmoviebeta.Data.MoviesContract;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -16,22 +18,30 @@ import com.squareup.picasso.Picasso;
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    // The number of items that will be in the view holder
-    private int mNumberOfItemsCount;
-
     // The current application context
-    private Context mContext;
+    private final Context mContext;
 
-    // TODO (2) Add cursor from main activity to bind data
+    // Bind data with the cursor returned from query
+    private Cursor mCursor;
 
     /**
      * Populate the number of items needed to be created for inflating to layout
-     * @param numberOfItems     number of items will be needed to be created
      * @param context           application current context
      */
-    public MovieAdapter(int numberOfItems, Context context) {
+    public MovieAdapter(Context context) {
         mContext = context;
-        mNumberOfItemsCount = numberOfItems;
+    }
+
+    /**
+     * Swap the old cursor with a new cursor of data
+     * @param newCursor
+     */
+    public void swapCursor(Cursor newCursor) {
+        // Swap the old cursor with new data
+        mCursor = newCursor;
+
+        // Notify the data set is changed
+        notifyDataSetChanged();
     }
 
     /**
@@ -65,7 +75,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
-        // TODO (1) BIND DATA HERE
+
+        // If the cursor approached the end or it's null
+        if(!mCursor.moveToPosition(position)) {
+            return;
+        }
+
+        // Grab the image url and movie title
+        String imageUrl = mCursor.getString(mCursor
+                .getColumnIndex(MoviesContract.PopularMovie.COL_MOVIE_POSTER));
+        String movieTitle = mCursor.getString(mCursor
+                .getColumnIndex(MoviesContract.PopularMovie.COL_ORIGINAL_TITLE));
+
+        // Bind the image url and the title
+        holder.bind(imageUrl,movieTitle);
     }
 
     /**
@@ -74,7 +97,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public int getItemCount() {
-        return mNumberOfItemsCount;
+        return mCursor.getCount();
     }
 
     class MovieAdapterViewHolder extends RecyclerView.ViewHolder {

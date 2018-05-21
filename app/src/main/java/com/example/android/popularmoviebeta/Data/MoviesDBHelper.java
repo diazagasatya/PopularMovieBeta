@@ -55,7 +55,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Upgrade the current database and tables if version is updgraded
+     * Upgrade the current database and tables if version is upgraded
      * @param db            database will be updated
      * @param oldVersion    oldVersion
      * @param newVersion    newVersion
