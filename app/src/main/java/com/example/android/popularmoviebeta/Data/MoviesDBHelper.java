@@ -35,7 +35,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                 + MoviesContract.PopularMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + MoviesContract.PopularMovie.COL_ORIGINAL_TITLE + " TEXT NOT NULL, "
                 + MoviesContract.PopularMovie.COL_MOVIE_POSTER + " TEXT NOT NULL, "
-                + MoviesContract.PopularMovie.COL_MOVIE_SYSNOPSIS + " TEXT NOT NULL, "
+                + MoviesContract.PopularMovie.COL_MOVIE_SYNOPSIS + " TEXT NOT NULL, "
                 + MoviesContract.PopularMovie.COL_RATINGS + " TEXT NOT NULL, "
                 + MoviesContract.PopularMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
                 + ");";
@@ -45,7 +45,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                 + MoviesContract.HighestRatedMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE + " TEXT NOT NULL, "
                 + MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER + " TEXT NOT NULL, "
-                + MoviesContract.HighestRatedMovie.COL_MOVIE_SYSNOPSIS + " TEXT NOT NULL, "
+                + MoviesContract.HighestRatedMovie.COL_MOVIE_SYNOPSIS + " TEXT NOT NULL, "
                 + MoviesContract.HighestRatedMovie.COL_RATINGS + " TEXT NOT NULL, "
                 + MoviesContract.HighestRatedMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
                 + ");";

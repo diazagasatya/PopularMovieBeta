@@ -3,7 +3,7 @@
     package="com.example.android.popularmoviebeta">
 
     <!-- Add Internet Permissions -->
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,9 +23,21 @@
 
         <!-- register the custom MoviesContentProvider -->
         <provider
-            android:authorities="com.example.android.popularmoviebeta"
-            android:name="com.example.android.popularmoviebeta.Data.MoviesProvider"
-            android:exported="false"/>
+            android:name=".Data.MoviesProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false" />
+
+        <activity android:name=".SettingsActivity"
+            android:label="@string/action_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity">
+            </meta-data>
+
+        </activity>
+
+
     </application>
 
 </manifest>

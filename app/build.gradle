@@ -32,4 +32,7 @@ dependencies {
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // Implement preference fragment for settings activity
+    compile 'com.android.support:preference-v7:27.1.1'
 }

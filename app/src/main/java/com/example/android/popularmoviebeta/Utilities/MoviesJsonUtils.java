@@ -28,7 +28,7 @@ public final class MoviesJsonUtils {
      */
     public static final String ORIGINAL_TITLE =  "original_title";
     public static final String IMAGE_PATH = "backdrop_path";
-    public static final String MOVIE_SYSNOPSIS = "overview";
+    public static final String MOVIE_SYNOPSIS = "overview";
     public static final String USER_RATING = "vote_average";
     public static final String RELEASE_DATE = "release_date";
 
@@ -91,14 +91,16 @@ public final class MoviesJsonUtils {
             // Grab the JSON values in the JSONobject
             originalTitle = movieObject.getString(ORIGINAL_TITLE);
             imagePath = BASE_IMAGE_URL + IMAGE_SIZE + movieObject.getString(IMAGE_PATH);
-            movieSynopsis = movieObject.getString(MOVIE_SYSNOPSIS);
+            movieSynopsis = movieObject.getString(MOVIE_SYNOPSIS);
             userRating = movieObject.getString(USER_RATING);
             releaseDate = movieObject.getString(RELEASE_DATE);
+
+            Log.v("Content Values POPULARITY: ", originalTitle + " " + imagePath + " " + movieSynopsis + " " + userRating + " " + releaseDate);
 
             // Put the string values inside the Table
             movieValues.put(MoviesContract.PopularMovie.COL_ORIGINAL_TITLE, originalTitle);
             movieValues.put(MoviesContract.PopularMovie.COL_MOVIE_POSTER, imagePath);
-            movieValues.put(MoviesContract.PopularMovie.COL_MOVIE_SYSNOPSIS, movieSynopsis);
+            movieValues.put(MoviesContract.PopularMovie.COL_MOVIE_SYNOPSIS, movieSynopsis);
             movieValues.put(MoviesContract.PopularMovie.COL_RATINGS, userRating);
             movieValues.put(MoviesContract.PopularMovie.COL_RELEASE_DATE, releaseDate);
 
@@ -162,16 +164,16 @@ public final class MoviesJsonUtils {
             // Grab the JSON values in the JSONobject
             originalTitle = movieObject.getString(ORIGINAL_TITLE);
             imagePath = BASE_IMAGE_URL + IMAGE_SIZE + movieObject.getString(IMAGE_PATH);
-            movieSynopsis = movieObject.getString(MOVIE_SYSNOPSIS);
+            movieSynopsis = movieObject.getString(MOVIE_SYNOPSIS);
             userRating = movieObject.getString(USER_RATING);
             releaseDate = movieObject.getString(RELEASE_DATE);
 
-            Log.v("Content Values : ", originalTitle + " " + imagePath + " " + movieSynopsis + " " + userRating + " " + releaseDate);
+            Log.v("Content Values TOP RATED: ", originalTitle + " " + imagePath + " " + movieSynopsis + " " + userRating + " " + releaseDate);
 
             // Put the string values inside the Table
             movieValues.put(MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE, originalTitle);
             movieValues.put(MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER, imagePath);
-            movieValues.put(MoviesContract.HighestRatedMovie.COL_MOVIE_SYSNOPSIS, movieSynopsis);
+            movieValues.put(MoviesContract.HighestRatedMovie.COL_MOVIE_SYNOPSIS, movieSynopsis);
             movieValues.put(MoviesContract.HighestRatedMovie.COL_RATINGS, userRating);
             movieValues.put(MoviesContract.HighestRatedMovie.COL_RELEASE_DATE, releaseDate);
 

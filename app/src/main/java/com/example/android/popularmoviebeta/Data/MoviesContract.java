@@ -45,7 +45,7 @@ public class MoviesContract {
         // Column names starts here
         public static final String COL_ORIGINAL_TITLE = "original_title";
         public static final String COL_MOVIE_POSTER = "image";
-        public static final String COL_MOVIE_SYSNOPSIS = "overview";
+        public static final String COL_MOVIE_SYNOPSIS = "overview";
         public static final String COL_RATINGS = "ratings";
         public static final String COL_RELEASE_DATE = "release_date";
 
@@ -66,7 +66,7 @@ public class MoviesContract {
         // Column names starts here
         public static final String COL_ORIGINAL_TITLE = "original_title";
         public static final String COL_MOVIE_POSTER = "image";
-        public static final String COL_MOVIE_SYSNOPSIS = "overview";
+        public static final String COL_MOVIE_SYNOPSIS = "overview";
         public static final String COL_RATINGS = "ratings";
         public static final String COL_RELEASE_DATE = "release_date";
 

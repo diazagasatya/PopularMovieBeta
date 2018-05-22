@@ -162,78 +162,84 @@ public class MoviesProvider extends ContentProvider {
         // Create a reference to the MoviesDBHelper database to bulk insert
         final SQLiteDatabase db = mMoviesDatabase.getWritableDatabase();
 
+        // Bulk insert to appropriate table
+        int tablePath = sUriMatcher.match(uri);
+
         // Create SQL Query from URI to the appropriate Table
-        switch(sUriMatcher.match(uri)) {
+        if(tablePath == POPULAR_PATH) {
+            System.out.println("BULK INSERT POPULAR");
+            // begin transaction before insertion to avoid leak
+            db.beginTransaction();
+            int numberOfRowsInserted = 0;
 
-            // CASE 1 ADDING BULK TO POPULAR TABLE
-            case POPULAR_PATH:
-                // begin transaction before insertion to avoid leak
-                db.beginTransaction();
-                int numberOfRowsInserted = 0;
+            // Surround the bulk insert in try block for safety
+            try {
+                // loop to all content values and insert to table
+                for(ContentValues cv : values) {
 
-                // Surround the bulk insert in try block for safety
-                try {
-                    // loop to all content values and insert to table
-                    for(ContentValues cv : values) {
+                    System.out.println(" POPULAR VALUE : " + cv);
+                    // insert method will return 1/-1
+                    long _id = db.insert(MoviesContract.PopularMovie.TABLE_NAME,
+                            null, cv);
 
-                        // insert method will return 1/-1
-                        long _id = db.insert(MoviesContract.PopularMovie.TABLE_NAME,
-                                null, cv);
-
-                        // increment the number of successful row inserted
-                        if(_id != -1) {
-                            numberOfRowsInserted++;
-                        }
+                    // increment the number of successful row inserted
+                    if(_id != -1) {
+                        numberOfRowsInserted++;
                     }
-                    db.setTransactionSuccessful();
-                } finally {
-                    // End the transaction to avoid leaks
-                    db.endTransaction();
                 }
+                db.setTransactionSuccessful();
+            } finally {
+                // End the transaction to avoid leaks
+                System.out.println("Transaction finished");
+                db.endTransaction();
+            }
 
-                // Notify change to the content resolver
-                if(numberOfRowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri,null);
-                }
+            // Notify change to the content resolver
+            if(numberOfRowsInserted > 0) {
+                getContext().getContentResolver().notifyChange(uri,null);
+            }
 
-                // return the number of rows inserted
-                return numberOfRowsInserted;
+            // return the number of rows inserted
+            return numberOfRowsInserted;
 
-            // CASE 2 ADDING BULK TO HIGHEST RATED TABLE
-            case HIGHEST_RATED_PATH:
-                db.beginTransaction();
-                numberOfRowsInserted = 0;
+        }
+        else if(tablePath == HIGHEST_RATED_PATH) {
 
-                // Surround the bulk insert in try block for safety
-                try {
-                    // loop to all content values and insert to table
-                    for(ContentValues cv : values) {
+            System.out.println("BULK INSERT TOP RATED");
+            db.beginTransaction();
+            int numberOfRowsInserted = 0;
 
-                        // insert method will return 1/-1
-                        long _id = db.insert(MoviesContract.HighestRatedMovie.TABLE_NAME,
-                                null, cv);
+            // Surround the bulk insert in try block for safety
+            try {
+                // loop to all content values and insert to table
+                for(ContentValues cv : values) {
 
-                        // increment the number of successful row inserted
-                        if(_id != -1) {
-                            numberOfRowsInserted++;
-                        }
+                    System.out.println(" TOP RATED VALUE : " + cv);
+                    // insert method will return 1/-1
+                    long _id = db.insert(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                            null, cv);
+
+                    // increment the number of successful row inserted
+                    if(_id != -1) {
+                        numberOfRowsInserted++;
                     }
-                    db.setTransactionSuccessful();
-                } finally {
-                    // End the transaction to avoid leaks
-                    db.endTransaction();
                 }
+                db.setTransactionSuccessful();
+            } finally {
+                // End the transaction to avoid leaks
+                db.endTransaction();
+            }
 
-                // Notify change to the content resolver
-                if(numberOfRowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri,null);
-                }
+            // Notify change to the content resolver
+            if(numberOfRowsInserted > 0) {
+                getContext().getContentResolver().notifyChange(uri,null);
+            }
 
-                // return the number of rows inserted
-                return numberOfRowsInserted;
-
-            default:
-                return super.bulkInsert(uri, values);
+            // return the number of rows inserted
+            return numberOfRowsInserted;
+        }
+        else {
+            return super.bulkInsert(uri, values);
         }
     }
 

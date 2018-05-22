@@ -5,7 +5,25 @@
     <string name="api_key">546ac5863d9083b1cf9d85daabc5446a</string>
 
     <!-- SORT MOVIES -->
-    <string name="popularity_desc">popularity.desc</string>
-    <string name="highest_rated">vote_average.desc</string>
+    <string name="action_settings">Settings</string>
+    <string name="sort_by_label">Sort By</string>
+    <string name="sort_by_key" translatable="false">sort_by_preference</string>
+    <string name="sort_by_default">popular</string>
+
+    <string name="content_authority">com.example.android.popularmoviebeta</string>
+
+    <!-- List of Human Readable Entries to Choose -->
+    <string-array name="sort_by_list">
+        <item>Popularity</item>
+        <item>Highest Rating</item>
+    </string-array>
+    <!-- The entry values that will be saved for preference -->
+    <string-array name="sort_by_values">
+        <item>popular</item>
+        <item>top_rated</item>
+    </string-array>
+    <string name="sort_by_summary">Show Movies Based On Sorting Preference</string>
+
+
 
 </resources>
