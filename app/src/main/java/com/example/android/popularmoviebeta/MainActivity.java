@@ -81,7 +81,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         setupSharedPreference();
 
         // Sync the movie database
-        MoviesSyncTask.syncTopRatedMovies(this);
+        MoviesSyncTask.syncPopularMovies(this);
     }
 
     @Override

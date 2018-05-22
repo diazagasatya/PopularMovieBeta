@@ -67,18 +67,20 @@ public class MoviesSyncTask {
         protected Void doInBackground(URL... urls) {
 
             // Grab the popular url
-            URL popularUrl = NetworkUtils.buildUrlPopular();
+            URL popularUrl = urls[0];
 
             // Try getting response from HTTP and insert data to appropriate table
             try {
 
-                // Sync the top rated movies database with themoviedb API
+                // TODO (1) PROBLEM IS WITH THE POPULAR CONTENT TABLE JUST USE HIGHEST RATED TABLE
+
+                // Sync the Popular movies database with themoviedb API
                 String httpPopularResults = NetworkUtils.getResponseFromHttpURL(popularUrl);
-                Log.v("Top Rated Movie HTTP Response: ", httpPopularResults);
+                Log.v("Popular Movie HTTP Response: ", httpPopularResults);
 
                 // Grab the content values after JSON Parsing
                 ContentValues[] popularMovieValues = MoviesJsonUtils
-                        .getTopRatedMoviesContentValuesFromJson(httpPopularResults);
+                        .getPopularMoviesContentValuesFromJson(httpPopularResults);
 
                 // Bulk insert the content values to the database
                 // Make sure that the movieValues are not empty
@@ -90,16 +92,16 @@ public class MoviesSyncTask {
                     /*
                      * Delete old data because every day movies popularity/rating changes
                      */
-                    popularMoviesContentResolver.delete(MoviesContract.PopularMovie.CONTENT_URI,
+                    popularMoviesContentResolver.delete(MoviesContract.HighestRatedMovie.CONTENT_URI,
                             null,
                             null);
 
                     /*
                      * Insert new movie data based upon current movies popularity/rating
                      */
-                    System.out.println("INSERT HERE: " + MoviesContract.PopularMovie.CONTENT_URI);
+                    System.out.println("INSERT HERE: " + MoviesContract.HighestRatedMovie.CONTENT_URI);
 
-                    popularMoviesContentResolver.bulkInsert(MoviesContract.PopularMovie.CONTENT_URI,
+                    popularMoviesContentResolver.bulkInsert(MoviesContract.HighestRatedMovie.CONTENT_URI,
                             popularMovieValues);
                 }
 
