@@ -81,7 +81,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         setupSharedPreference();
 
         // Sync the movie database
-        MoviesSyncTask.syncPopularMovies(this);
+        MoviesSyncTask.syncMovies(this);
     }
 
     @Override
@@ -125,11 +125,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 
-        System.out.println("CALL HERE WOOHOO LOADER ID : " + loaderId);
-
         if(loaderId == ID_POPULAR_MOVIE_LOADER) {
-
-            System.out.println("Popular Movie Loader");
 
             // Get the popular movie content URI from contract
             Uri popularMovieUri = MoviesContract.PopularMovie.CONTENT_URI;
@@ -142,8 +138,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                     null);
 
         } else if (loaderId == ID_TOP_RATED_MOVIE_LOADER) {
-
-            System.out.println("TOP RATED LOADER");
 
             // Get the popular movie content URI from contract
             Uri topRatedMovieUri = MoviesContract.HighestRatedMovie.CONTENT_URI;
@@ -241,11 +235,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         String sortByPopularity = getResources().getStringArray(R.array.sort_by_values)[0];
         String sortByRating = getResources().getStringArray(R.array.sort_by_values)[1];
 
-        System.out.println("HERE1 : " + sortByPopularity + " " + sortByRating);
-        System.out.println("HERE2 : " + key);
-        System.out.println("here3 : " + sharedPreferences.getString(key,
-                sortByPopularity));
-        System.out.println("key: " + R.string.sort_by_key);
 
         // Check which preference have changed from the String value
         if (key.equals(getString(R.string.sort_by_key))) {
@@ -257,7 +246,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
             String clickedSortingPreference = sharedPreferences.getString(key,
                     sortByPopularity);
 
-            System.out.println("CHANGE TO : " + clickedSortingPreference);
 
             // Load the appropriate loader ID based upon preference changed
             if (clickedSortingPreference.equals(sortByPopularity)) {
@@ -266,27 +254,23 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                 tableId = ID_POPULAR_MOVIE_LOADER;
 
                 // Set the top rated table to notify adapter
-                MoviesSyncTask.syncPopularMovies(this);
+                // MoviesSyncTask.syncPopularMovies(this);
 
                 getSupportLoaderManager()
-                        .initLoader(ID_POPULAR_MOVIE_LOADER, null, this);
+                        .restartLoader(ID_POPULAR_MOVIE_LOADER, null, this);
 
-                System.out.println("popular chosen");
 
             } else if (clickedSortingPreference.equals(sortByRating)) {
-
-                System.out.println("REACH PREFERENCE");
 
                 // Set the top rated loader ID based upon preference changed
                 tableId = ID_TOP_RATED_MOVIE_LOADER;
 
                 // Set the top rated table to notify adapter
-                MoviesSyncTask.syncTopRatedMovies(this);
+                // MoviesSyncTask.syncTopRatedMovies(this);
 
                 getSupportLoaderManager()
-                        .initLoader(ID_TOP_RATED_MOVIE_LOADER, null, this);
+                        .restartLoader(ID_TOP_RATED_MOVIE_LOADER, null, this);
 
-                System.out.println("highest rated chosen");
             }
         } else {
             System.out.println("not equal");

@@ -43,10 +43,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         // Swap the old cursor with new data
         mCursor = newCursor;
 
-        System.out.println("COUNT : " + mCursor.getCount());
-
-        System.out.println("TABLE ID : " + tableId);
-
         // Distinguish which table to bind data from
         tableIdentification = tableId;
 
@@ -95,29 +91,27 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             return;
         }
 
-        System.out.println("CURRENT TABLE ID : " + tableIdentification);
-
         switch(tableIdentification) {
             case POPULAR_TABLE:
-                System.out.println("BIND POPULAR");
+
                 // Grab the image url and movie title
                 imageUrl = mCursor.getString(mCursor
                         .getColumnIndex(MoviesContract.PopularMovie.COL_MOVIE_POSTER));
-                System.out.println("POPULAR URL : " + imageUrl);
+
                 movieTitle = mCursor.getString(mCursor
                         .getColumnIndex(MoviesContract.PopularMovie.COL_ORIGINAL_TITLE));
-                System.out.println("Popular title : " + movieTitle);
+
                 break;
 
             case TOP_RATED_TABLE:
-                System.out.println("BIND TOP RATED");
+
                 // Grab the image url and movie title
                 imageUrl = mCursor.getString(mCursor
                         .getColumnIndex(MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER));
 
                 movieTitle = mCursor.getString(mCursor
                         .getColumnIndex(MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE));
-                System.out.println("TOP RATED title : " + movieTitle);
+
                 break;
 
         }

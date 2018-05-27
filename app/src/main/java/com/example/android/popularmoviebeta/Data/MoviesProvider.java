@@ -92,7 +92,7 @@ public class MoviesProvider extends ContentProvider {
             case POPULAR_PATH:
 
                 // Retrieve the full Popular Movie table
-                resultCursor = db.query(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                resultCursor = db.query(MoviesContract.PopularMovie.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -167,7 +167,7 @@ public class MoviesProvider extends ContentProvider {
 
         // Create SQL Query from URI to the appropriate Table
         if(tablePath == POPULAR_PATH) {
-            System.out.println("BULK INSERT POPULAR");
+
             // begin transaction before insertion to avoid leak
             db.beginTransaction();
             int numberOfRowsInserted = 0;
@@ -177,7 +177,6 @@ public class MoviesProvider extends ContentProvider {
                 // loop to all content values and insert to table
                 for(ContentValues cv : values) {
 
-                    System.out.println(" POPULAR VALUE : " + cv);
                     // insert method will return 1/-1
                     long _id = db.insert(MoviesContract.PopularMovie.TABLE_NAME,
                             null, cv);
@@ -190,7 +189,6 @@ public class MoviesProvider extends ContentProvider {
                 db.setTransactionSuccessful();
             } finally {
                 // End the transaction to avoid leaks
-                System.out.println("Transaction finished");
                 db.endTransaction();
             }
 
@@ -205,7 +203,6 @@ public class MoviesProvider extends ContentProvider {
         }
         else if(tablePath == HIGHEST_RATED_PATH) {
 
-            System.out.println("BULK INSERT TOP RATED");
             db.beginTransaction();
             int numberOfRowsInserted = 0;
 
@@ -214,7 +211,6 @@ public class MoviesProvider extends ContentProvider {
                 // loop to all content values and insert to table
                 for(ContentValues cv : values) {
 
-                    System.out.println(" TOP RATED VALUE : " + cv);
                     // insert method will return 1/-1
                     long _id = db.insert(MoviesContract.HighestRatedMovie.TABLE_NAME,
                             null, cv);

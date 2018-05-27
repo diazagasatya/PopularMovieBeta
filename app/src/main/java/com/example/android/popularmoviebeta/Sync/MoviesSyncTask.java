@@ -20,59 +20,47 @@ public class MoviesSyncTask {
      * Sync database to today's data for popular and highest rated movies
      * @param context       Application context
      */
-    public static void syncTopRatedMovies(@NonNull final Context context) {
-        // Run the Networking HTTPs on the background thread using AsyncTask
-        TopRatedMoviesAsyncTask asyncTask = new TopRatedMoviesAsyncTask(context);
+    public static void syncMovies(@NonNull final Context context) {
 
-        // Insert all of the API urls to run http request
+        // Run the Asynctask that will request the HTTP API from moviedb
+        MoviesAsyncTask asyncTask = new MoviesAsyncTask(context);
+
+        // Build the url for API request to moviedb
+        URL popularMovieUrl = NetworkUtils.buildUrlPopular();
         URL topRatedUrl = NetworkUtils.buildUrlHighestRated();
 
-        // Run Asynctask For HTTP Request
-        asyncTask.execute(topRatedUrl);
+        final int NUMBER_OF_API_REQUESTS = 2;
+
+        // Insert the API url into an array of urls passed in to the asynctask
+        URL[] urls = new URL[NUMBER_OF_API_REQUESTS];
+
+        urls[0] = popularMovieUrl;
+        urls[1] = topRatedUrl;
+
+        asyncTask.execute(urls);
     }
 
     /**
-     * Sync database to today's data for popular movies
-     * @param context       Application context
+     * Sync the database with the current popular and highest rated movie from moviedb API
      */
-    public static void syncPopularMovies(@NonNull final Context context) {
-
-        // Run the popular movie API using asynctask
-        PopularMovieAsyncTask popularMovieAsyncTask = new PopularMovieAsyncTask(context);
-
-        // Build popular API URL
-        URL popularUrl = NetworkUtils.buildUrlPopular();
-
-        // Run Asynctask For HTTP Request
-        popularMovieAsyncTask.execute(popularUrl);
-
-    }
-
-    /**
-     * This inner class will perform AsyncTask in the background for Popular API Request
-     */
-    public static class PopularMovieAsyncTask extends AsyncTask<URL, Void, Void> {
+    public static class MoviesAsyncTask extends AsyncTask<URL, Void, Void> {
 
         private Context mContext;
 
-        /**
-         * Constructor that will initiated the context
-         * @param context
-         */
-        public PopularMovieAsyncTask(Context context) {
+        public MoviesAsyncTask(@NonNull final Context context) {
             mContext = context;
         }
 
         @Override
         protected Void doInBackground(URL... urls) {
 
-            // Grab the popular url
+            // Grab the urls for http request
             URL popularUrl = urls[0];
+            URL topRatedUrl = urls[1];
+
 
             // Try getting response from HTTP and insert data to appropriate table
             try {
-
-                // TODO (1) PROBLEM IS WITH THE POPULAR CONTENT TABLE JUST USE HIGHEST RATED TABLE
 
                 // Sync the Popular movies database with themoviedb API
                 String httpPopularResults = NetworkUtils.getResponseFromHttpURL(popularUrl);
@@ -89,55 +77,25 @@ public class MoviesSyncTask {
                     // Get a handle to the content resolver to insert values
                     ContentResolver popularMoviesContentResolver = mContext.getContentResolver();
 
+
                     /*
                      * Delete old data because every day movies popularity/rating changes
                      */
-                    popularMoviesContentResolver.delete(MoviesContract.HighestRatedMovie.CONTENT_URI,
+                    popularMoviesContentResolver.delete(MoviesContract.PopularMovie.CONTENT_URI,
                             null,
                             null);
 
                     /*
                      * Insert new movie data based upon current movies popularity/rating
                      */
-                    System.out.println("INSERT HERE: " + MoviesContract.HighestRatedMovie.CONTENT_URI);
-
-                    popularMoviesContentResolver.bulkInsert(MoviesContract.HighestRatedMovie.CONTENT_URI,
+                    popularMoviesContentResolver.bulkInsert(MoviesContract.PopularMovie.CONTENT_URI,
                             popularMovieValues);
+
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
-
-    /**
-     * This inner class will perform AsyncTask in the background for TOP RATED API Request
-     */
-    public static class TopRatedMoviesAsyncTask extends AsyncTask<URL, Void, Void> {
-
-        // Set current context
-        private Context mContext;
-
-        /**
-         * Constructor that will initiated the context
-         * @param context
-         */
-        TopRatedMoviesAsyncTask(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        protected Void doInBackground(URL... urls) {
-
-            // Grab the popular url
-            URL topRatedUrl = urls[0];
-
-            // Try getting response from HTTP and insert data to appropriate table
-            try {
-
+                /*
+                 * STARTS SYNC FOR TOP RATED MOVIEs
+                 */
                 // Sync the top rated movies database with themoviedb API
                 String httpTopRatedResults = NetworkUtils.getResponseFromHttpURL(topRatedUrl);
                 Log.v("Top Rated Movie HTTP Response: ", httpTopRatedResults);
@@ -163,16 +121,14 @@ public class MoviesSyncTask {
                     /*
                      * Insert new movie data based upon current movies popularity/rating
                      */
-                    System.out.println("INSERT HERE: " + MoviesContract.HighestRatedMovie.CONTENT_URI);
-
                     topRatedMoviesContentResolver.bulkInsert(MoviesContract.HighestRatedMovie.CONTENT_URI,
                             topRatedMovieValues);
+
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return null;
         }
     }
