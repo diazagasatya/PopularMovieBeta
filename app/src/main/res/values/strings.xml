@@ -24,5 +24,7 @@
     </string-array>
     <string name="sort_by_summary">Show Movies Based On Sorting Preference</string>
 
+    <string name="layout_testing">Testing!</string>
+
 
 </resources>
