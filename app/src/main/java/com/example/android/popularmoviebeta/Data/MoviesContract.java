@@ -3,6 +3,8 @@ package com.example.android.popularmoviebeta.Data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import java.net.URI;
+
 
 /**
  * Created by diazagasatya on 5/6/18.
@@ -49,6 +51,18 @@ public class MoviesContract {
         public static final String COL_RATINGS = "ratings";
         public static final String COL_RELEASE_DATE = "release_date";
 
+        /**
+         * Create URI to grab the detail information of the movie
+         * @param movieId           The _ID of the movie in the table
+         * @return URI
+         */
+        public static Uri buildUriWithIdPopular(int movieId) {
+
+            // The URI of the movie on the table
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(movieId)).build();
+        }
+
     }
 
     /**
@@ -69,6 +83,18 @@ public class MoviesContract {
         public static final String COL_MOVIE_SYNOPSIS = "overview";
         public static final String COL_RATINGS = "ratings";
         public static final String COL_RELEASE_DATE = "release_date";
+
+        /**
+         * Create URI to grab the detail information of the movie
+         * @param movieId           The _ID of the movie in the table
+         * @return URI
+         */
+        public static Uri buildUriWithIdHighestRated(int movieId) {
+
+            // The URI of the movie on the table
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(movieId)).build();
+        }
 
     }
 

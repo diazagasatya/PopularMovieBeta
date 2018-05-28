@@ -27,12 +27,23 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     // Bind data with the cursor returned from query
     private Cursor mCursor;
 
+    // Create a reference to a click handler for the adapter
+    final private MovieAdapterOnClickHandler mClickHandler;
+
+    /**
+     * Build an interface that will receive onclick movie
+     */
+    public interface MovieAdapterOnClickHandler {
+        void clickedMovie(int idNumber);
+    }
+
     /**
      * Populate the number of items needed to be created for inflating to layout
      * @param context           application current context
      */
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, MovieAdapterOnClickHandler onClickHandler) {
         mContext = context;
+        mClickHandler = onClickHandler;
     }
 
     /**
@@ -130,7 +141,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         return mCursor.getCount();
     }
 
-    class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
+    class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Add a reference of the image view and text view from movie grid item layout
         ImageView nPosterImageUrl;
@@ -149,6 +160,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             nPosterImageUrl = itemView.findViewById(R.id.iv_movie_poster);
             nMovieTitle = itemView.findViewById(R.id.tv_movie_title);
 
+            // Set the listener to this listener
+            viewItem.setOnClickListener(this);
+
         }
 
         /**
@@ -163,5 +177,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             nMovieTitle.setText(movieTitle);
         }
 
+        /**
+         * Grab the position of the cursor that was clicked to get the movie id
+         * @param v     The View item that was clicked
+         */
+        @Override
+        public void onClick(View v) {
+            // Get the position of the adapter that was clicked and pass in the position
+            int movieIdentification = getAdapterPosition();
+            mClickHandler.clickedMovie(movieIdentification);
+        }
     }
 }

@@ -16,13 +16,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.example.android.popularmoviebeta.Data.MoviesContract;
 import com.example.android.popularmoviebeta.Sync.MoviesSyncTask;
 
 
+
 public class MainActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>,
-        SharedPreferences.OnSharedPreferenceChangeListener{
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        MovieAdapter.MovieAdapterOnClickHandler{
 
     // Number of span in grid
     private static final int NUM_OF_SPAN = 2;
@@ -52,6 +56,9 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
             MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE
     };
 
+    // Table identification for detail activity
+    public static final String TABLE_IDENTIFICATION = "table_identification";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +79,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         mMovieList.setHasFixedSize(true);
 
         // Instantiate a new adapter to fill out data from SQLite database
-        mMovieAdapter = new MovieAdapter(this);
+        mMovieAdapter = new MovieAdapter(this, this);
 
         // Connect the recycler view with the adapter
         mMovieList.setAdapter(mMovieAdapter);
@@ -270,10 +277,63 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
 
                 getSupportLoaderManager()
                         .restartLoader(ID_TOP_RATED_MOVIE_LOADER, null, this);
-
             }
         } else {
             System.out.println("not equal");
+        }
+    }
+
+    /**
+     * This will initiate the intent to start the DetailActivity
+     * @param idNumber
+     */
+    @Override
+    public void clickedMovie(int idNumber) {
+
+        // Initiate the intent to detail activity
+        Intent movieDetailIntent = new Intent(
+                MainActivity.this, DetailActivity.class);
+
+        System.out.println(" ITEM CLICKED: " + idNumber);
+
+        /*
+         * Build the URI for creating a query for the clicked movie,
+         * based upon current displayed TABLE.
+         */
+        switch(tableId) {
+
+            case ID_POPULAR_MOVIE_LOADER:
+                Uri moviePopularDetailInformation = MoviesContract
+                        .PopularMovie.buildUriWithIdPopular(idNumber);
+
+                System.out.println(" URI CLICKED: " + moviePopularDetailInformation.toString());
+
+                // Adding the URI to the intent
+                movieDetailIntent.setData(moviePopularDetailInformation);
+                movieDetailIntent.putExtra(TABLE_IDENTIFICATION, tableId);
+
+                // Start the activity
+                startActivity(movieDetailIntent);
+
+                break;
+
+            case ID_TOP_RATED_MOVIE_LOADER:
+                Uri movieHighestRatedDetailInformation = MoviesContract
+                        .HighestRatedMovie.buildUriWithIdHighestRated(idNumber);
+
+                // Adding the URI to the intent
+                movieDetailIntent.setData(movieHighestRatedDetailInformation);
+                movieDetailIntent.putExtra(TABLE_IDENTIFICATION, tableId);
+
+                // Start the activity
+                startActivity(movieDetailIntent);
+
+                break;
+
+            default:
+                Toast.makeText(this,
+                        "There's no detail content of the movie",
+                        Toast.LENGTH_SHORT).show();
         }
     }
 }

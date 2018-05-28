@@ -30,6 +30,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+
         final String CREATE_POPULAR_MOVIE_TABLE = "CREATE TABLE "
                 + MoviesContract.PopularMovie.TABLE_NAME + " ("
                 + MoviesContract.PopularMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

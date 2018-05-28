@@ -181,7 +181,7 @@ public class MoviesProvider extends ContentProvider {
                     long _id = db.insert(MoviesContract.PopularMovie.TABLE_NAME,
                             null, cv);
 
-                    // increment the number of successful row inserted
+                    // increment the number of successful row inserted/**/
                     if(_id != -1) {
                         numberOfRowsInserted++;
                     }
