@@ -3,8 +3,6 @@ package com.example.android.popularmoviebeta.Data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import java.net.URI;
-
 
 /**
  * Created by diazagasatya on 5/6/18.

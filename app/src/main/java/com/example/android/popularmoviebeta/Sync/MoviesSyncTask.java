@@ -16,8 +16,6 @@ import com.example.android.popularmoviebeta.Utilities.NetworkUtils;
 
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
 public class MoviesSyncTask {
 
     /**
