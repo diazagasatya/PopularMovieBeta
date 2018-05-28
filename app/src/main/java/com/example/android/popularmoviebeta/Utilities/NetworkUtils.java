@@ -19,6 +19,7 @@ public class NetworkUtils {
 
     // Please insert your MovieDB API KEY here before running
     // This API Key can be obtained by registering to https://developers.themoviedb.org
+
     // TODO (1) PLEASE ENTER YOUR MOVIE DB API_KEY HERE
     private static final String API_KEY = "";
 

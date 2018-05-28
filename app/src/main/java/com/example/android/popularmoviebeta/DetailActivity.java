@@ -153,7 +153,7 @@ public class DetailActivity extends AppCompatActivity
         /*****************
          * Movie Ratings *
          *****************/
-        String movieRatings = data.getString(INDEX_RATINGS);
+        String movieRatings = data.getString(INDEX_RATINGS) + "/10";
         mRatings.setText(movieRatings);
 
         /**********************

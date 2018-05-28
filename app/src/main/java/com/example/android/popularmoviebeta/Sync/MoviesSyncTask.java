@@ -3,9 +3,13 @@ package com.example.android.popularmoviebeta.Sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.example.android.popularmoviebeta.Data.MoviesContract;
 import com.example.android.popularmoviebeta.Utilities.MoviesJsonUtils;
 import com.example.android.popularmoviebeta.Utilities.NetworkUtils;
@@ -21,6 +25,15 @@ public class MoviesSyncTask {
      * @param context       Application context
      */
     public static void syncMovies(@NonNull final Context context) {
+
+        // Check INTERNET Access first
+        if(!checkInternetConnection(context)) {
+            System.out.println("NO INTERNET CONNECTION!");
+            Toast.makeText(context,
+                    "No Internet Connection",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Run the Asynctask that will request the HTTP API from moviedb
         MoviesAsyncTask asyncTask = new MoviesAsyncTask(context);
@@ -38,6 +51,30 @@ public class MoviesSyncTask {
         urls[1] = topRatedUrl;
 
         asyncTask.execute(urls);
+    }
+
+    /**
+     * This function will check internet connection first before asking
+     * for a HTTP Request, and will return a boolean.
+     * @return boolean
+     */
+    public static boolean checkInternetConnection(Context context) {
+
+        boolean internetConnection = false;
+
+        // Get connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Get Network info
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        // Return the boolean value of the connection
+        if(networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+            internetConnection = true;
+        }
+
+        return internetConnection;
     }
 
     /**
