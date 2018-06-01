@@ -11,16 +11,12 @@
         android:id="@+id/tv_ratings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="88dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:text="@string/layout_testing"
         android:textAlignment="textStart"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tv_release_date"
         app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
 
@@ -44,26 +40,26 @@
         android:layout_marginStart="8dp"
         android:text="@string/layout_testing"
         android:textAlignment="center"
-        android:textSize="50sp"
         android:textColor="#FFFFFF"
+        android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="@+id/title_background"
         app:layout_constraintEnd_toEndOf="@+id/title_background"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="0.049"
         app:layout_constraintStart_toStartOf="@+id/title_background"
         app:layout_constraintTop_toTopOf="@+id/title_background"
-        app:layout_constraintVertical_bias="0.768" />
+        app:layout_constraintVertical_bias="0.989" />
 
     <TextView
         android:id="@+id/tv_release_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
         android:text="@string/layout_testing"
         android:textAlignment="textStart"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_movie_poster"
         app:layout_constraintTop_toBottomOf="@+id/title_background" />
 
     <TextView
@@ -73,9 +69,10 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:textColor="#FFFFFF"
         android:layout_marginTop="8dp"
         android:text="@string/layout_testing"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,10 +81,10 @@
 
     <ImageView
         android:id="@+id/iv_movie_poster"
-        android:layout_width="183dp"
-        android:layout_height="188dp"
+        android:layout_width="239dp"
+        android:layout_height="181dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@string/layout_testing"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
