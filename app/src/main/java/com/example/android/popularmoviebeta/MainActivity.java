@@ -1,5 +1,6 @@
 package com.example.android.popularmoviebeta;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -13,12 +14,15 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.example.android.popularmoviebeta.Data.MoviesContract;
+import com.example.android.popularmoviebeta.Data.MoviesProvider;
 import com.example.android.popularmoviebeta.Sync.MoviesSyncTask;
 
 
@@ -303,10 +307,17 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         switch(tableId) {
 
             case ID_POPULAR_MOVIE_LOADER:
+
+                // Grab Movie ID from table
+                Uri popularMovieUri = MoviesContract.PopularMovie.CONTENT_URI;
+                String movieId = grabMovieId(popularMovieUri, tableId, idNumber);
+
+                // Initiate MovieSyncTask to sync Review and Trailer
+                MoviesSyncTask.syncTrailersAndReview(this, movieId, tableId);
+
+                // Grab the specific movie and set the data of the intent
                 Uri moviePopularDetailInformation = MoviesContract
                         .PopularMovie.buildUriWithIdPopular(idNumber);
-
-                System.out.println(" URI CLICKED: " + moviePopularDetailInformation.toString());
 
                 // Adding the URI to the intent
                 movieDetailIntent.setData(moviePopularDetailInformation);
@@ -318,6 +329,15 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                 break;
 
             case ID_TOP_RATED_MOVIE_LOADER:
+
+                // Grab Movies ID from table
+                Uri highestRatedMovieUri = MoviesContract.HighestRatedMovie.CONTENT_URI;
+                String movieIdTop = grabMovieId(highestRatedMovieUri, tableId, idNumber);
+
+                // Initiate MovieSyncTask to sync Review & Trailer to add to table
+                MoviesSyncTask.syncTrailersAndReview(this, movieIdTop, tableId);
+
+                // Grab the specific movie and set the data of the intent
                 Uri movieHighestRatedDetailInformation = MoviesContract
                         .HighestRatedMovie.buildUriWithIdHighestRated(idNumber);
 
@@ -334,6 +354,87 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                 Toast.makeText(this,
                         "There's no detail content of the movie",
                         Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * This helper method will query the database for the movieId
+     * @param uri   BASE CONTENT URI
+     * @return Movie Identification
+     */
+    public String grabMovieId(Uri uri, int tableId, int rowId) {
+
+        switch(tableId) {
+            case ID_POPULAR_MOVIE_LOADER:
+
+                // Get the Movie ID from popular table
+                String[] STRING_PROJECTION = {
+                        MoviesContract.PopularMovie.COL_MOVIE_ID
+                };
+
+                // Grab the movie Id using Query method in Content Resolver
+                ContentResolver contentResolver = getContentResolver();
+                Cursor cursor = contentResolver.
+                        query(uri,STRING_PROJECTION,null, null,null);
+
+                String movieId;
+
+                // Grab the Movie Id
+                try {
+
+                    // Move the cursor to the clicked movie
+                    cursor.moveToPosition(rowId);
+
+                    movieId = cursor.getString(cursor.
+                            getColumnIndex(MoviesContract.PopularMovie.COL_MOVIE_ID));
+
+                    cursor.close();
+
+                } catch (Exception e) {
+
+                    Log.v("Movie Id", "Column Index is not available / cursor is null");
+
+                    throw new NullPointerException(e.getMessage());
+                }
+
+                return movieId;
+
+            case ID_TOP_RATED_MOVIE_LOADER:
+
+                // Get the Movie ID from highest rated table
+                String[] STRING_TOP_PROJECTION = {
+                        MoviesContract.HighestRatedMovie.COL_MOVIE_ID
+                };
+
+                // Grab the movie Id using Query method in Content Resolver
+                ContentResolver contentTopResolver = getContentResolver();
+                Cursor cursorTopRated = contentTopResolver.
+                        query(uri,STRING_TOP_PROJECTION,null,null,null);
+
+                String movieIdTopRated;
+
+                // Grab the Movie Id
+                try {
+
+                    // Move the cursor to the clicked movie
+                    cursorTopRated.moveToPosition(rowId);
+
+                    movieIdTopRated = cursorTopRated.getString(cursorTopRated.
+                            getColumnIndex(MoviesContract.HighestRatedMovie.COL_MOVIE_ID));
+
+                    cursorTopRated.close();
+
+                } catch (Exception e) {
+
+                    Log.v("Movie Id", "Column Index is not available / cursor is null");
+
+                    throw new NullPointerException(e.getMessage());
+                }
+                return movieIdTopRated;
+
+            default:
+
+                throw new NullPointerException("table id is incorrect");
         }
     }
 }

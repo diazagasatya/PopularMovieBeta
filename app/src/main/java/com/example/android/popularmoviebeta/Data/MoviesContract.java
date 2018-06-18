@@ -48,6 +48,9 @@ public class MoviesContract {
         public static final String COL_MOVIE_SYNOPSIS = "overview";
         public static final String COL_RATINGS = "ratings";
         public static final String COL_RELEASE_DATE = "release_date";
+        public static final String COL_MOVIE_ID = "movie_id";
+        public static final String COL_TRAILERS = "trailers";
+        public static final String COL_REVIEW = "review";
 
         /**
          * Create URI to grab the detail information of the movie
@@ -81,6 +84,9 @@ public class MoviesContract {
         public static final String COL_MOVIE_SYNOPSIS = "overview";
         public static final String COL_RATINGS = "ratings";
         public static final String COL_RELEASE_DATE = "release_date";
+        public static final String COL_MOVIE_ID = "movie_id";
+        public static final String COL_TRAILERS = "trailers";
+        public static final String COL_REVIEW = "review";
 
         /**
          * Create URI to grab the detail information of the movie

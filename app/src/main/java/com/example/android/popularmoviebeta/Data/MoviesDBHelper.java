@@ -13,7 +13,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "movies.db";
 
     // Initiate the version of the database from 1
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     /**
      * Create the constructor that will call the super class SQLiteOpenHelper
@@ -38,7 +38,10 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                 + MoviesContract.PopularMovie.COL_MOVIE_POSTER + " TEXT NOT NULL, "
                 + MoviesContract.PopularMovie.COL_MOVIE_SYNOPSIS + " TEXT NOT NULL, "
                 + MoviesContract.PopularMovie.COL_RATINGS + " TEXT NOT NULL, "
-                + MoviesContract.PopularMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
+                + MoviesContract.PopularMovie.COL_RELEASE_DATE + " TEXT NOT NULL, "
+                + MoviesContract.PopularMovie.COL_MOVIE_ID + " TEXT NOT NULL, "
+                + MoviesContract.PopularMovie.COL_TRAILERS + " TEXT , " // NULLABLE
+                + MoviesContract.PopularMovie.COL_REVIEW + " TEXT " // NULLABLE
                 + ");";
 
         final String CREATE_HIGHEST_RATED_MOVIE_TABLE = "CREATE TABLE "
@@ -48,7 +51,10 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                 + MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER + " TEXT NOT NULL, "
                 + MoviesContract.HighestRatedMovie.COL_MOVIE_SYNOPSIS + " TEXT NOT NULL, "
                 + MoviesContract.HighestRatedMovie.COL_RATINGS + " TEXT NOT NULL, "
-                + MoviesContract.HighestRatedMovie.COL_RELEASE_DATE + " TEXT NOT NULL"
+                + MoviesContract.HighestRatedMovie.COL_RELEASE_DATE + " TEXT NOT NULL,  "
+                + MoviesContract.HighestRatedMovie.COL_MOVIE_ID + " TEXT NOT NULL, "
+                + MoviesContract.HighestRatedMovie.COL_TRAILERS + " TEXT ,  " // NULLABLE
+                + MoviesContract.HighestRatedMovie.COL_REVIEW + " TEXT " // NULLABLE
                 + ");";
 
         sqLiteDatabase.execSQL(CREATE_POPULAR_MOVIE_TABLE);

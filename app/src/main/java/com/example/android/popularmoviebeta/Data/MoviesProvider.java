@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by diazagasatya on 5/18/18.
@@ -285,16 +286,53 @@ public class MoviesProvider extends ContentProvider {
     }
 
     /**
-     * Not implementing update
-     * @param uri           null
-     * @param values        null
-     * @param selection     null
-     * @param selectionArgs null
+     * This method will update the selection column with the appropriate content values
+     * @param uri           Table URI
+     * @param values        Content Values
+     * @param selection     Where Level
+     * @param selectionArgs Where arguments
      * @return
      */
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        throw new RuntimeException("Not implementing update in this project");
+
+        // Keep track of the updates that occured
+        int taskUpdated;
+
+        switch(sUriMatcher.match(uri)) {
+
+            case POPULAR_PATH:
+
+                // Update specific selection with the arguments
+                taskUpdated = mMoviesDatabase.getWritableDatabase()
+                        .update(MoviesContract.PopularMovie.TABLE_NAME,
+                                values,selection,selectionArgs);
+
+                break;
+
+            case HIGHEST_RATED_PATH:
+
+                // Update specific selection with the arguments
+                taskUpdated = mMoviesDatabase.getWritableDatabase()
+                        .update(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                                values,selection,selectionArgs);
+
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Uknown URI: " + uri);
+        }
+
+        // If task updated please notify
+        if(taskUpdated != 0) {
+
+            // Set notifications if a task was updated
+            Log.v("UPDATED COLUMN : ", selection);
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // return number of task updated
+        return taskUpdated;
     }
 
     /**

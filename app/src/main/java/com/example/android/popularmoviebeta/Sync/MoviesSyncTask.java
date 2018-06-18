@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,7 +17,17 @@ import com.example.android.popularmoviebeta.Utilities.NetworkUtils;
 
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class MoviesSyncTask {
+
+    // Popular Table and Highest Rated Table Identification
+    public static final int ID_POPULAR_TABLE = 100;
+    public static final int ID_HIGHEST_RATED_TABLE = 200;
+
+    // Global variables
+    public static String GLOBAL_MOVIE_ID = "0";
+    public static int GLOBAL_TABLE_ID = 0;
 
     /**
      * Sync database to today's data for popular and highest rated movies
@@ -51,29 +62,145 @@ public class MoviesSyncTask {
         asyncTask.execute(urls);
     }
 
+
     /**
-     * This function will check internet connection first before asking
-     * for a HTTP Request, and will return a boolean.
-     * @return boolean
+     * This is a helper function to check internet connection first before
+     * requesting a HTTP Request
+     * @param context
      */
-    public static boolean checkInternetConnection(Context context) {
+    public static void syncTrailersAndReview(Context context, String movieId,
+                                             int categoryIdentification) {
 
-        boolean internetConnection = false;
-
-        // Get connectivity service
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        // Get Network info
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        // Return the boolean value of the connection
-        if(networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-            internetConnection = true;
+        // Check INTERNET Access first
+        if(!checkInternetConnection(context)) {
+            System.out.println("NO INTERNET CONNECTION!");
+            Toast.makeText(context,
+                    "No Internet Connection",
+                    Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        return internetConnection;
+        // Initiate a new Asynctask for http request movie/{id}/videos & movie/{id}/review
+        TrailersAndReviewAsyncTask trailersAndReviewAsyncTask =
+                new TrailersAndReviewAsyncTask(context);
+
+        // Build the urls for requesting video(s) & review
+        final int NUMBER_OF_URLS = 2;
+
+        URL[] urls = new URL[NUMBER_OF_URLS];
+
+        // Pass on the categoryIdentification as a URL
+        try {
+
+            // Build URLS
+            GLOBAL_MOVIE_ID = movieId;
+            GLOBAL_TABLE_ID = categoryIdentification;
+            urls[0] = NetworkUtils.buildUrlVideos(movieId);
+            urls[1] = NetworkUtils.buildUrlReview(movieId);
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return;
+        }
+
+        trailersAndReviewAsyncTask.execute(urls);
     }
+
+    /**
+     * Sync the database with their new trailers and review from MovieDb API
+     */
+    public static class TrailersAndReviewAsyncTask extends AsyncTask<URL, Void, Void> {
+
+        private Context mContext;
+
+        public TrailersAndReviewAsyncTask(@NonNull final Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(URL... urls) {
+
+            // Grab the urls
+            URL urlVideos = urls[0];
+            URL urlReviews = urls[1];
+
+            // Convert the table identification into an Int for Table recognition
+            int tableId = GLOBAL_TABLE_ID;
+
+            // Convert the movieId to string for updating appropriate table
+            String movieId = GLOBAL_MOVIE_ID;
+
+            // Try the HTTP Request Here
+            try {
+
+                // Sync the specific movie with the new trailers
+                String specificMovieTrailers = NetworkUtils.getResponseFromHttpURL(urlVideos);
+                Log.v("Movie Trailer Response", specificMovieTrailers);
+
+                // Grab the content values after JSON Parsing
+                ContentValues trailerValues =
+                        MoviesJsonUtils.getTrailersFromJson(specificMovieTrailers, tableId);
+
+                // TODO(5) SYNC REVIEWS HERE
+                // Sync the specific movie withe the new review
+                // String specificMovieReview = NetworkUtils.getResponseFromHttpURL(urlReviews);
+                // Log.v("Movie Review Response", specificMovieReview);
+
+                // Grab the content values after JSON Parsing
+                // ContentValues reviewValues =
+                //        MoviesJsonUtils.getReviewsFromJson(specificMovieReview, tableId);
+
+                // Insert the values to table here
+                switch(tableId) {
+
+                    case ID_POPULAR_TABLE:
+
+                        // Make sure that trailer values is successful
+                        if(trailerValues != null) {
+
+                            // Get a handle to the content resolver to update table
+                            ContentResolver popularContentResolver = mContext.getContentResolver();
+
+                            /*
+                             * Update the trailer columns with the values
+                             */
+                            popularContentResolver.
+                                    update(MoviesContract.PopularMovie.CONTENT_URI,
+                                            trailerValues,
+                                            MoviesContract.PopularMovie.COL_MOVIE_ID + "=?",
+                                            new String[] {movieId});
+                        }
+                        break;
+
+                    case ID_HIGHEST_RATED_TABLE:
+
+                        // Make sure that the trailer values is successful
+                        if(trailerValues != null) {
+
+                            // Get a handle to the content resolver to update table
+                            ContentResolver highestRatedContentResolver = mContext.getContentResolver();
+
+                            /*
+                             * Update the trailer columns with the values
+                             */
+                            highestRatedContentResolver.
+                                    update(MoviesContract.HighestRatedMovie.CONTENT_URI,
+                                            trailerValues,
+                                            MoviesContract.HighestRatedMovie.COL_MOVIE_ID + "=?",
+                                            new String[] {movieId});
+                        }
+                        break;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 
     /**
      * Sync the database with the current popular and highest rated movie from moviedb API
@@ -111,7 +238,6 @@ public class MoviesSyncTask {
 
                     // Get a handle to the content resolver to insert values
                     ContentResolver popularMoviesContentResolver = mContext.getContentResolver();
-
 
                     /*
                      * Delete old data because every day movies popularity/rating changes
@@ -166,6 +292,30 @@ public class MoviesSyncTask {
             }
             return null;
         }
+    }
+
+    /**
+     * This function will check internet connection first before asking
+     * for a HTTP Request, and will return a boolean.
+     * @return boolean
+     */
+    public static boolean checkInternetConnection(Context context) {
+
+        boolean internetConnection = false;
+
+        // Get connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Get Network info
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        // Return the boolean value of the connection
+        if(networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+            internetConnection = true;
+        }
+
+        return internetConnection;
     }
 
 }

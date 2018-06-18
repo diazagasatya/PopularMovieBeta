@@ -26,5 +26,7 @@
 
     <string name="layout_testing">Testing!</string>
 
+    <string name="trailer_label">Trailers:</string>
+
 
 </resources>

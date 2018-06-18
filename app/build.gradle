@@ -27,7 +27,7 @@ dependencies {
     // Implement Picasso for image rendering
     compile 'com.squareup.picasso:picasso:2.5.2'
 
-    // Implement recycler view for activity_main layout
+    // Implement recycler view for activity_main layout & also detail_activity for trailers
     compile 'com.android.support:recyclerview-v7:27.1.1'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

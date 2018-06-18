@@ -21,7 +21,7 @@ public class NetworkUtils {
     // This API Key can be obtained by registering to https://developers.themoviedb.org
 
     // TODO (1) PLEASE ENTER YOUR MOVIE DB API_KEY HERE
-    private static final String API_KEY = "";
+    private static final String API_KEY = "546ac5863d9083b1cf9d85daabc5446a";
 
     /* API URL FORMATTING */
     private static final String VERSION = "3"; // Current API version available
@@ -33,6 +33,8 @@ public class NetworkUtils {
     private static final String LANGUAGE = "en-US"; // Show in English
     private static final String PAGE_PARAM = "page";
     private static final String PAGE_NUMBER = "1"; // Number of page shows
+    private static final String VIDEOS = "videos";
+    private static final String REVIEWS = "reviews";
 
     // Base URL for movieDB API
     private static final String BASE_URL_MOVIE = "https://api.themoviedb.org";
@@ -68,6 +70,71 @@ public class NetworkUtils {
 
         return url;
     }
+
+    /**
+     * Build the URL needed to grab trailers from movie db API
+     * @param movieId
+     * @return
+     */
+    public static URL buildUrlVideos(String movieId) {
+
+        // Build URI for the http request of trailers
+        Uri uriVideos = Uri.parse(BASE_URL_MOVIE).buildUpon()
+                .appendPath(VERSION)
+                .appendPath(MOVIE_PATH)
+                .appendPath(movieId)
+                .appendPath(VIDEOS)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendQueryParameter(LANGUAGE_PARAM,LANGUAGE).build();
+
+        // Build URL From URI
+        URL url = null;
+
+        try {
+            url = new URL(uriVideos.toString());
+
+            // Print the Url for debugging purposes
+            Log.v(TAG, url.toString());
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    /**
+     * Build the URL needed to grab reviews from movie db API
+     * @param movieId
+     * @return
+     */
+    public static URL buildUrlReview(String movieId) {
+
+        // Build URI for the http request of trailers
+        Uri uriReviews = Uri.parse(BASE_URL_MOVIE).buildUpon()
+                .appendPath(VERSION)
+                .appendPath(MOVIE_PATH)
+                .appendPath(movieId)
+                .appendPath(REVIEWS)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendQueryParameter(LANGUAGE_PARAM,LANGUAGE).build();
+
+        // Build URL From URI
+        URL url = null;
+
+        try {
+            url = new URL(uriReviews.toString());
+
+            // Print the Url for debugging purposes
+            Log.v(TAG, url.toString());
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
 
     /**
      * Build the URL needed to grab highest rated movies JSON data from movieDB API.

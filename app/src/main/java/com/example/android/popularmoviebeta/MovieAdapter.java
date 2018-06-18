@@ -28,7 +28,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private Cursor mCursor;
 
     // Create a reference to a click handler for the adapter
-    final private MovieAdapterOnClickHandler mClickHandler;
+    private final MovieAdapterOnClickHandler mClickHandler;
 
     /**
      * Build an interface that will receive onclick movie
@@ -90,6 +90,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         return viewHolder;
     }
 
+    /**
+     * Bind the information to the corresponding views
+     * @param holder            view holders
+     * @param position          position of the cursor
+     */
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
 
@@ -148,7 +153,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         TextView nMovieTitle;
 
         /**
-         * Will create reference to the items inside the layour to be binded
+         * Will create reference to the items inside the layout to be binded
          * @param viewItem
          */
         public MovieAdapterViewHolder(View viewItem) {
@@ -156,7 +161,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             // Call the super class to initialize the viewItem
             super(viewItem);
 
-            // Reference the image view and the text view from layour
+            // Reference the image view and the text view from layout
             nPosterImageUrl = itemView.findViewById(R.id.iv_movie_poster);
             nMovieTitle = itemView.findViewById(R.id.tv_movie_title);
 
