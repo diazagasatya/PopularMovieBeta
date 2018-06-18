@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular Movies</string>
+    <string name="app_name">Film Inc</string>
 
     <!--PLEASE INSERT YOUT API_KEY TO RUN THIS APP-->
     <string name="api_key">546ac5863d9083b1cf9d85daabc5446a</string>

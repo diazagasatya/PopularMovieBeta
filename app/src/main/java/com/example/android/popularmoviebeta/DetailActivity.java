@@ -1,5 +1,7 @@
 package com.example.android.popularmoviebeta;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -238,7 +240,28 @@ public class DetailActivity extends AppCompatActivity
      * @param idNumber          trailer ID youtube in string
      */
     @Override
-    public void clickedTrailer(int idNumber, String youtubeId) {
-        // TODO (2) IMPLEMENT YOUTUBE INTENT HERE
+    public void clickedTrailer(int idNumber, String youtubeLink) {
+
+        // Parse the id for application intent
+        String[] youtubeId = youtubeLink.split("=");
+        final int youtubeIdIndex = 1;
+
+        // Code safely by having the web browser as Plan B if youtube app is unavailable
+        Intent webBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
+
+        // Here try if application is available, if not use regular web browser
+        try {
+            // App intent and also Web intent if youtube is unavailable in the device
+            Intent applicationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"
+                    + youtubeId[youtubeIdIndex]));
+
+            // Start applicationIntent
+            startActivity(applicationIntent);
+
+        } catch (ActivityNotFoundException exception) {
+
+            // Start web browser intent
+            startActivity(webBrowserIntent);
+        }
     }
 }
