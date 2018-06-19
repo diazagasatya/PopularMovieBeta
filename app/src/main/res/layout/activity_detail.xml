@@ -101,7 +101,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/trailer_label"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tv_movie_synopsis"
             app:layout_constraintTop_toBottomOf="@+id/line_separator" />
@@ -142,6 +142,32 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_trailers_label" />
+
+        <TextView
+            android:id="@+id/tv_reviews_label"
+            android:layout_width="90dp"
+            android:layout_height="28dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/review_label"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/rv_reviews"
+            app:layout_constraintStart_toStartOf="@+id/tv_movie_synopsis"
+            app:layout_constraintTop_toBottomOf="@+id/rv_trailers" />
+
+        <!-- This recycler view is for the Reviews -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+        </android.support.v7.widget.RecyclerView>
 
 
     </android.support.constraint.ConstraintLayout>

@@ -11,14 +11,13 @@
 
     <ImageView
         android:id="@+id/iv_play_image"
-        android:layout_width="47dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="94dp"
+        android:layout_height="74dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_play"
-        />
+        app:srcCompat="@android:drawable/ic_media_play" />
 
     <ImageView
         android:id="@+id/iv_line_seperator"
@@ -30,20 +29,21 @@
         android:background="#465B66"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_play_button"
+        app:layout_constraintTop_toBottomOf="@+id/iv_play_image"
         app:srcCompat="@android:drawable/divider_horizontal_bright" />
 
     <TextView
         android:id="@+id/tv_trailer_string"
         android:layout_width="280dp"
         android:layout_height="28dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginEnd="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
         android:text="@string/layout_testing"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/iv_line_seperator"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/iv_play_image"

@@ -17,16 +17,23 @@
         <item>Popularity</item>
         <item>Highest Rating</item>
     </string-array>
+
     <!-- The entry values that will be saved for preference -->
     <string-array name="sort_by_values">
         <item>popular</item>
         <item>top_rated</item>
     </string-array>
+
     <string name="sort_by_summary">Show Movies Based On Sorting Preference</string>
 
     <string name="layout_testing">Testing!</string>
 
     <string name="trailer_label">Trailers:</string>
+
+    <string name="review_label">Reviews:</string>
+
+    <string name ="author_label">N/A</string>
+
 
 
 </resources>

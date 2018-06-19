@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerAdapterViewHolder> {
 
@@ -53,7 +55,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         // Get the int reference of the layout for each item
-        int layoutForTrailers = R.layout.linear_layout_item;
+        int layoutForTrailers = R.layout.trailer_linear_item;
 
         // Make sure to not attach the view group to parent immediately (only when info is available)
         boolean shouldAttachImmediately = false;
@@ -89,8 +91,13 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         String youtubeUrlString = youtubeLinks[position];
         trailerString += (position + 1);
 
+        String[] youtubeParsing = youtubeUrlString.split("=");
+        String youtubeIdentification = youtubeParsing[1];
+        String youtubeThumbnail = "https://img.youtube.com/vi/"
+                + youtubeIdentification + "/hqdefault.jpg";
+
         // Bind the string variables from the data in the cursor
-        holder.bind(trailerString, youtubeUrlString);
+        holder.bind(trailerString, youtubeUrlString, youtubeThumbnail);
     }
 
     @Override
@@ -105,7 +112,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         ImageView nPlayButton, nLineSeparator;
 
         /**
-         * Will initiate each item with corresponding id label in linear_layout_item.xml
+         * Will initiate each item with corresponding id label in trailer_linear_item.xml
          * @param viewItem              View item
          */
         public TrailerAdapterViewHolder(View viewItem) {
@@ -128,10 +135,13 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
          * @param trailerString             "Trailer" string and the corresponding integer
          * @param youtubeUrlString          Hidden youtube url for running intent later on
          */
-        void bind(String trailerString, String youtubeUrlString) {
+        void bind(String trailerString, String youtubeUrlString, String youtubeThumbnail) {
             // Bind the texts
             nYoutubeUrl.setText(youtubeUrlString);
             nTrailerText.setText(trailerString);
+
+            // Bind the image using Picasso
+            Picasso.with(mContext).load(youtubeThumbnail).into(nPlayButton);
         }
 
 

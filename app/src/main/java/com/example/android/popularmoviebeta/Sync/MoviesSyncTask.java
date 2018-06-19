@@ -143,14 +143,13 @@ public class MoviesSyncTask {
                 ContentValues trailerValues =
                         MoviesJsonUtils.getTrailersFromJson(specificMovieTrailers, tableId);
 
-                // TODO(5) SYNC REVIEWS HERE
-                // Sync the specific movie withe the new review
-                // String specificMovieReview = NetworkUtils.getResponseFromHttpURL(urlReviews);
-                // Log.v("Movie Review Response", specificMovieReview);
+                // Sync the specific movie with their new review
+                String specificMovieReview = NetworkUtils.getResponseFromHttpURL(urlReviews);
+                Log.v("Movie Review Response", specificMovieReview);
 
                 // Grab the content values after JSON Parsing
-                // ContentValues reviewValues =
-                //        MoviesJsonUtils.getReviewsFromJson(specificMovieReview, tableId);
+                ContentValues reviewValues =
+                      MoviesJsonUtils.getReviewsFromJson(specificMovieReview, tableId);
 
                 // Insert the values to table here
                 switch(tableId) {
@@ -171,6 +170,14 @@ public class MoviesSyncTask {
                                             trailerValues,
                                             MoviesContract.PopularMovie.COL_MOVIE_ID + "=?",
                                             new String[] {movieId});
+
+                            /*
+                             * Update the Review columns with the values
+                             */
+                            popularContentResolver.update(MoviesContract.PopularMovie.CONTENT_URI,
+                                    reviewValues,
+                                    MoviesContract.PopularMovie.COL_MOVIE_ID + "=?",
+                                    new String[] {movieId});
                         }
                         break;
 
@@ -190,6 +197,14 @@ public class MoviesSyncTask {
                                             trailerValues,
                                             MoviesContract.HighestRatedMovie.COL_MOVIE_ID + "=?",
                                             new String[] {movieId});
+
+                            /*
+                             * Update the Review columns with the values
+                             */
+                            highestRatedContentResolver.update(MoviesContract.HighestRatedMovie.CONTENT_URI,
+                                    reviewValues,
+                                    MoviesContract.HighestRatedMovie.COL_MOVIE_ID + "=?",
+                                    new String[] {movieId});
                         }
                         break;
                 }

@@ -31,7 +31,8 @@ public class DetailActivity extends AppCompatActivity
             MoviesContract.PopularMovie.COL_MOVIE_SYNOPSIS,
             MoviesContract.PopularMovie.COL_RATINGS,
             MoviesContract.PopularMovie.COL_RELEASE_DATE,
-            MoviesContract.PopularMovie.COL_TRAILERS
+            MoviesContract.PopularMovie.COL_TRAILERS,
+            MoviesContract.PopularMovie.COL_REVIEW
     };
     public static final String[] HIGHEST_RATED_PROJECTION = {
             MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE,
@@ -39,7 +40,8 @@ public class DetailActivity extends AppCompatActivity
             MoviesContract.HighestRatedMovie.COL_MOVIE_SYNOPSIS,
             MoviesContract.HighestRatedMovie.COL_RATINGS,
             MoviesContract.HighestRatedMovie.COL_RELEASE_DATE,
-            MoviesContract.HighestRatedMovie.COL_TRAILERS
+            MoviesContract.HighestRatedMovie.COL_TRAILERS,
+            MoviesContract.HighestRatedMovie.COL_REVIEW
     };
 
     // This indices should match the projection above to retrieve data
@@ -49,6 +51,7 @@ public class DetailActivity extends AppCompatActivity
     public static final int INDEX_RATINGS = 3;
     public static final int INDEX_RELEASE_DATE = 4;
     public static final int INDEX_TRAILERS = 5;
+    public static final int INDEX_REVIEWS = 6;
 
     // Initialize the text views
     TextView mOriginalTitle;
@@ -69,11 +72,15 @@ public class DetailActivity extends AppCompatActivity
 
     // Trailers Adapter
     private TrailersAdapter mTrailerAdapter;
+    private ReviewsAdapter mReviewAdapter;
 
-    // Recycler view of the Linear Layout
+    // Recycler view of the Linear Layout Trailers
     private RecyclerView mTrailerist;
+    private RecyclerView mReviewList;
+
     // Set initial position to -1
-    private int mPosition = RecyclerView.NO_POSITION;
+    private int mPositionTrailer = RecyclerView.NO_POSITION;
+    private int mPositionReview = RecyclerView.NO_POSITION;
 
     // Use a progress bar for displaying process of retrieving videos
     private ProgressBar mSpinner;
@@ -83,6 +90,9 @@ public class DetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        /*
+         * Recycler View for the Trailers
+         */
         // Get a reference of the recycler view in activity_detail.xml
         mTrailerist = findViewById(R.id.rv_trailers);
 
@@ -94,11 +104,29 @@ public class DetailActivity extends AppCompatActivity
         // Set the layout of the recycler view to the linear layout
         mTrailerist.setLayoutManager(linearLayoutManager);
 
-        // Will not change the child layout in the RecyclerView
+        // Will not change the child layout in the RecyclerView & Initiate adapter in LoadFinish
         mTrailerist.setHasFixedSize(true);
 
-        // Initiate the adapter in the load finished
+        /*
+         * Recycler View for the reviews
+         */
+        // Get a reference to the recycler view in activity_details.xml
+        mReviewList = findViewById(R.id.rv_reviews);
 
+        // Initialize the layout needed to make the recycler view a LinearLayout
+        LinearLayoutManager linearLayoutManagerReview = new
+                LinearLayoutManager(this
+                ,LinearLayoutManager.VERTICAL,false);
+
+        // Use the previously made linear layout manager settings
+        mReviewList.setLayoutManager(linearLayoutManagerReview);
+
+        // Will not change the child layout in the RecyclerView & Initiate adapter in LoadFinish
+        mReviewList.setHasFixedSize(true);
+
+        /*
+         * Essential information for the detail activity UI
+         */
         // Reference the text views with the views in activity_detail
         mOriginalTitle = findViewById(R.id.tv_movie_title);
         mMoviePoster = findViewById(R.id.iv_movie_poster);
@@ -129,6 +157,12 @@ public class DetailActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Loader will load all of the data of a single row
+     * @param id             Table Identification
+     * @param args           Arguments for query
+     * @return CursorLoader  Cursor with all of the data
+     */
     @NonNull
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
@@ -155,6 +189,11 @@ public class DetailActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Will run the adapters & cursor data needed to fill in information in the UI
+     * @param loader            Loader
+     * @param data              CursorLoader Data
+     */
     @Override
     public void onLoadFinished(@NonNull android.support.v4.content.Loader<Cursor> loader, Cursor data) {
 
@@ -221,13 +260,44 @@ public class DetailActivity extends AppCompatActivity
             mTrailerist.setAdapter(mTrailerAdapter);
 
             // Initialize the position to 0
-            if(mPosition == RecyclerView.NO_POSITION) {
-                mPosition = 0;
+            if(mPositionTrailer == RecyclerView.NO_POSITION) {
+                mPositionTrailer = 0;
             }
 
             // Set the recycler view to scroll smoothly
-            mTrailerist.smoothScrollToPosition(mPosition);
+            mTrailerist.smoothScrollToPosition(mPositionTrailer);
         }
+
+        /**********************
+         *   Movie Reviews   *
+         **********************/
+        String movieReviews = data.getString(INDEX_REVIEWS);
+
+        // Loaders may take some time, therefore this will run when loader is finished
+        if(movieReviews != null) {
+
+            // Split the strings separated by "##"
+            String[] reviews = movieReviews.split("\\##");
+
+            for(String review : reviews) {
+                System.out.println("TESTING : " + review);
+            }
+
+            // Initialize the adapter to fill out the item with the array
+            mReviewAdapter = new ReviewsAdapter(this, reviews);
+
+            // Connect the recycler view with the adapter
+            mReviewList.setAdapter(mReviewAdapter);
+
+            // Initialize the position to 0
+            if(mPositionReview == RecyclerView.NO_POSITION) {
+                mPositionReview = 0;
+            }
+
+            // Set the recycler view to scroll smoothly
+            mReviewList.smoothScrollToPosition(mPositionReview);
+        }
+
     }
 
     @Override

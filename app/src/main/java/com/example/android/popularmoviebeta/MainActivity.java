@@ -240,6 +240,11 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
 
     }
 
+    /**
+     * Change in sorting preferences setting
+     * @param sharedPreferences         Shared preferences
+     * @param key                       Sorting key
+     */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 

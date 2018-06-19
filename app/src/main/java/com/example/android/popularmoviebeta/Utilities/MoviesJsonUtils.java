@@ -39,6 +39,8 @@ public final class MoviesJsonUtils {
     public static final String TRAILER_SITE = "site";
     public static final String TRAILER_KEY = "key";
     public static final String YOUTUBE = "YouTube";
+    public static final String AUTHOR = "author";
+    public static final String CONTENT = "content";
 
     // Use this static string as a confirmation of http request
     public static final String HTTP_RESPONSE_CONFIRMATION = "cod";
@@ -143,16 +145,13 @@ public final class MoviesJsonUtils {
 
     /**
      * This method will return the reviews of particular movie
-     * @param jsonStringResponse
-     * @param tableId
-     * @return
+     * @param jsonStringResponse            HTTP Response API
+     * @param tableId                       Current Preference
+     * @return movieReviewValue             Content Value
      * @throws JSONException
      */
     public static ContentValues getReviewsFromJson(String jsonStringResponse, int tableId)
         throws JSONException {
-
-        // TODO(3) IMPLEMENT REVIEWS ON DETAIL ACTIVITY
-        // TODO(4) PARSE THE RESULTS API
 
         // Instantiate the String Response as A JSON Object
         JSONObject reviewLists = new JSONObject(jsonStringResponse);
@@ -175,10 +174,47 @@ public final class MoviesJsonUtils {
 
         // Grab the results as JSONArray
         JSONArray reviewResults = reviewLists.getJSONArray(RESULTS);
+        int reviewResultsLength = reviewResults.length();
 
+        // Create content values to put all of the reviews in column "Review"
+        ContentValues movieReviewValue = new ContentValues();
 
-        return null;
+        // This String will hold all of the reviews
+        String reviews = "";
 
+        // For each to grab review one by one
+        for(int i = 0; i < reviewResultsLength; i++) {
+
+            // Reference of JSONObject
+            JSONObject review = reviewResults.getJSONObject(i);
+
+            // Author will be seperated by specific characters "[**}"
+            String author = review.getString(AUTHOR) + "<>";
+            String content = review.getString(CONTENT);
+
+            // Append both string to the reviews
+            reviews += author + content;
+
+            // Each review will be seperated by "[***}"
+            if(i < reviewResultsLength - 1) {
+                reviews += "##";
+            }
+
+            // Print the reviews for debugging purposes
+            Log.v("REVIEWS" , reviews);
+        }
+
+        // Put the values in CV to the appropriate col name (table)
+        switch(tableId) {
+            case ID_POPULAR_TABLE:
+                movieReviewValue.put(MoviesContract.PopularMovie.COL_REVIEW, reviews);
+                break;
+            case ID_TOP_RATED_TABLE:
+                movieReviewValue.put(MoviesContract.HighestRatedMovie.COL_REVIEW, reviews);
+                break;
+        }
+
+        return movieReviewValue;
     }
 
     /**
