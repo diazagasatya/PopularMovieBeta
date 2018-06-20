@@ -34,6 +34,8 @@
 
     <string name ="author_label">N/A</string>
 
+    <string name ="favorites_label">Add to Favorites!</string>
+
 
 
 </resources>

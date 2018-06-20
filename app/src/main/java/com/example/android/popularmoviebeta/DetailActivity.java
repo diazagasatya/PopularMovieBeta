@@ -1,8 +1,11 @@
 package com.example.android.popularmoviebeta;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,12 +15,16 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmoviebeta.Data.MoviesContract;
+import com.example.android.popularmoviebeta.Data.MoviesDBHelper;
+import com.example.android.popularmoviebeta.Utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity
@@ -31,6 +38,7 @@ public class DetailActivity extends AppCompatActivity
             MoviesContract.PopularMovie.COL_MOVIE_SYNOPSIS,
             MoviesContract.PopularMovie.COL_RATINGS,
             MoviesContract.PopularMovie.COL_RELEASE_DATE,
+            MoviesContract.PopularMovie.COL_MOVIE_ID,
             MoviesContract.PopularMovie.COL_TRAILERS,
             MoviesContract.PopularMovie.COL_REVIEW
     };
@@ -40,6 +48,7 @@ public class DetailActivity extends AppCompatActivity
             MoviesContract.HighestRatedMovie.COL_MOVIE_SYNOPSIS,
             MoviesContract.HighestRatedMovie.COL_RATINGS,
             MoviesContract.HighestRatedMovie.COL_RELEASE_DATE,
+            MoviesContract.HighestRatedMovie.COL_MOVIE_ID,
             MoviesContract.HighestRatedMovie.COL_TRAILERS,
             MoviesContract.HighestRatedMovie.COL_REVIEW
     };
@@ -50,8 +59,9 @@ public class DetailActivity extends AppCompatActivity
     public static final int INDEX_MOVIE_SYNOPSIS = 2;
     public static final int INDEX_RATINGS = 3;
     public static final int INDEX_RELEASE_DATE = 4;
-    public static final int INDEX_TRAILERS = 5;
-    public static final int INDEX_REVIEWS = 6;
+    public static final int INDEX_MOVIE_ID = 5;
+    public static final int INDEX_TRAILERS = 6;
+    public static final int INDEX_REVIEWS = 7;
 
     // Initialize the text views
     TextView mOriginalTitle;
@@ -84,6 +94,9 @@ public class DetailActivity extends AppCompatActivity
 
     // Use a progress bar for displaying process of retrieving videos
     private ProgressBar mSpinner;
+
+    // Cursor with the data of this movie
+    private Cursor nMovieData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +219,8 @@ public class DetailActivity extends AppCompatActivity
         } else {
             // Cursor Loader v4 returns the full data of the cursor, move into the correct position
             data.moveToPosition(dataPosition);
+            // Save the data to mMovieData if needed for adding to favorites
+            nMovieData = data;
         }
 
         /******************
@@ -266,6 +281,9 @@ public class DetailActivity extends AppCompatActivity
 
             // Set the recycler view to scroll smoothly
             mTrailerist.smoothScrollToPosition(mPositionTrailer);
+
+            // Update the movieData
+            nMovieData = data;
         }
 
         /**********************
@@ -296,8 +314,10 @@ public class DetailActivity extends AppCompatActivity
 
             // Set the recycler view to scroll smoothly
             mReviewList.smoothScrollToPosition(mPositionReview);
-        }
 
+            // Update the movieData
+            nMovieData = data;
+        }
     }
 
     @Override
@@ -333,5 +353,64 @@ public class DetailActivity extends AppCompatActivity
             // Start web browser intent
             startActivity(webBrowserIntent);
         }
+    }
+
+    /**
+     * This method is linked with the button add to favorites.
+     * This will insert the movie clicked to the favorites table
+     * @param view
+     */
+    public void addToFavorites(View view) {
+
+        // Check first if data is completely loaded
+        if(nMovieData.getCount() == 0) {
+            return;
+        }
+
+        // Call add movie if clicked
+        addMovie();
+
+        // Show a toast that insertion to favorite table is successful
+        Toast successInsertion = Toast.makeText(this,
+                "Added to Favorite List!",Toast.LENGTH_LONG);
+        successInsertion.show();
+    }
+
+
+    /**
+     * This function will insert the current showing movie to the favorite table
+     */
+    public void addMovie() {
+
+        // Create a ContentValues instance to pass the values onto the insert query
+        ContentValues movieData = new ContentValues();
+
+        // Call put to insert values inside the contentValue object
+        movieData.put(MoviesContract.FavoriteMovies.COL_ORIGINAL_TITLE,
+                nMovieData.getString(INDEX_ORIGINAL_TITLE));
+        movieData.put(MoviesContract.FavoriteMovies.COL_MOVIE_POSTER,
+                nMovieData.getString(INDEX_MOVIE_POSTER));
+        movieData.put(MoviesContract.FavoriteMovies.COL_MOVIE_SYNOPSIS,
+                nMovieData.getString(INDEX_MOVIE_SYNOPSIS));
+        movieData.put(MoviesContract.FavoriteMovies.COL_RATINGS,
+                nMovieData.getString(INDEX_RATINGS));
+        movieData.put(MoviesContract.FavoriteMovies.COL_RELEASE_DATE,
+                nMovieData.getString(INDEX_RELEASE_DATE));
+        movieData.put(MoviesContract.FavoriteMovies.COL_MOVIE_ID,
+                nMovieData.getString(INDEX_MOVIE_ID));
+        movieData.put(MoviesContract.FavoriteMovies.COL_TRAILERS,
+                nMovieData.getString(INDEX_TRAILERS));
+        movieData.put(MoviesContract.FavoriteMovies.COL_REVIEW,
+                nMovieData.getString(INDEX_REVIEWS));
+
+        // Get reference to content resolver for insertion
+        ContentResolver favoriteContentResolver = this.getContentResolver();
+
+        // Returned Uri with newly appended ID
+        Uri movieAddedUriWithId = favoriteContentResolver
+                .insert(MoviesContract.FavoriteMovies.CONTENT_URI, movieData);
+
+        // Print out the uri for debugging purposes
+        Log.v("Insertion Confirmation", movieAddedUriWithId.toString());
     }
 }

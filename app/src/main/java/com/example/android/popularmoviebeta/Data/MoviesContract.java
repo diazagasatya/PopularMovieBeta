@@ -29,6 +29,7 @@ public class MoviesContract {
      */
     public static final String PATH_POPULARITY = "popular_movie";
     public static final String PATH_HIGHEST_RATED = "highest_rated_movie";
+    public static final String PATH_USER_FAVORITES = "user_favorites";
 
     /**
      * Table for the most popular movie in 2018 and released "Today".
@@ -100,6 +101,42 @@ public class MoviesContract {
                     .appendPath(Integer.toString(movieId)).build();
         }
 
+    }
+
+    /**
+     * A localized table containing user's favorite movies
+     * This table should be shown & updated upon user's request
+     */
+    public static final class FavoriteMovies implements BaseColumns {
+
+        // Create this particular table CONTENT_URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_USER_FAVORITES).build();
+
+        // Table names and database column names
+        public static final String TABLE_NAME = "user_favorite_movies";
+
+        // Column name starts here
+        public static final String COL_ORIGINAL_TITLE = "original_title";
+        public static final String COL_MOVIE_POSTER = "image";
+        public static final String COL_MOVIE_SYNOPSIS = "overview";
+        public static final String COL_RATINGS = "ratings";
+        public static final String COL_RELEASE_DATE = "release_date";
+        public static final String COL_MOVIE_ID = "movie_id";
+        public static final String COL_TRAILERS = "trailers";
+        public static final String COL_REVIEW = "review";
+
+        /**
+         * Create the URI to grab one movie (one row) with all of the column info
+         * @param movieId           The _ID of the movie in the table
+         * @return URI
+         */
+        public static Uri buildUriWithIdFavorites(int movieId) {
+
+            // The appended id of the content Uri
+            return CONTENT_URI.buildUpon()
+                    .appendEncodedPath(Integer.toString(movieId)).build();
+        }
     }
 
 }

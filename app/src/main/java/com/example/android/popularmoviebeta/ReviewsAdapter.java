@@ -111,7 +111,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewAd
          * @param content           Content Review
          */
         void bind(String author, String content) {
-            // Bind strings with the corresponding textviews
+            // Bind strings with the corresponding text views
             authorReview.setText(author);
             contentReview.setText(content);
         }

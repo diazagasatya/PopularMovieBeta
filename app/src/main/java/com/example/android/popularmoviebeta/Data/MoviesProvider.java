@@ -1,6 +1,7 @@
 package com.example.android.popularmoviebeta.Data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -24,6 +25,8 @@ public class MoviesProvider extends ContentProvider {
     private static final int POPULAR_PATH_WITH_ID = 101;
     private static final int HIGHEST_RATED_PATH = 200;
     private static final int HIGHEST_RATED_WITH_ID = 201;
+    private static final int FAVORITE_PATH = 300;
+    private static final int FAVORITE_PATH_WITH_ID = 301;
 
     // Create a global variable of uriMatcher
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -47,6 +50,10 @@ public class MoviesProvider extends ContentProvider {
                 MoviesContract.PATH_HIGHEST_RATED, HIGHEST_RATED_PATH);
         uriMatcher.addURI(MoviesContract.CONTENT_AUTHORITY,
                 MoviesContract.PATH_HIGHEST_RATED + "/#", HIGHEST_RATED_WITH_ID);
+        uriMatcher.addURI(MoviesContract.CONTENT_AUTHORITY,
+                MoviesContract.PATH_USER_FAVORITES, FAVORITE_PATH);
+        uriMatcher.addURI(MoviesContract.CONTENT_AUTHORITY,
+                MoviesContract.PATH_USER_FAVORITES + "/#", FAVORITE_PATH_WITH_ID);
 
         return uriMatcher;
     }
@@ -347,7 +354,7 @@ public class MoviesProvider extends ContentProvider {
     }
 
     /**
-     * Not implementing insert, we are implementing bulkInsert instead
+     * Implement insert for adding movie to the favorite table
      * @param uri           null
      * @param values        null
      * @return              null
@@ -355,6 +362,43 @@ public class MoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        throw new RuntimeException("Not implementing insert in this project");
+
+        // Get database reference for writing database
+        final SQLiteDatabase mDb = mMoviesDatabase.getWritableDatabase();
+
+        // Write URI matching code to identify the match with favorite table
+        int match = sUriMatcher.match(uri);
+
+        // We need to return the uri with appended Id after succesful insertion
+        Uri returnUri;
+
+        // Switch statement if uri match with favorite table
+        switch(match) {
+            case FAVORITE_PATH:
+                // Inserting the values into the table
+                long id = mDb.insert(MoviesContract.FavoriteMovies.TABLE_NAME
+                        , null, values);
+
+                // if success the id should be the row id it was added to
+                if(id > 0) {
+                    returnUri = ContentUris.withAppendedId(MoviesContract
+                            .FavoriteMovies.CONTENT_URI, id);
+                } else {
+                    // This is when the returned id is -1 which failed
+                    throw new android.database.SQLException("Failed insertion to "
+                            + uri);
+                }
+                break;
+            // No need to implement other table cases since insertion is only used
+            // for the favorite feature
+            default:
+                throw new UnsupportedOperationException("Uknown URI : " + uri);
+        }
+
+        // Get the content resolver and notify that table was changed
+        getContext().getContentResolver().notifyChange(uri,null);
+
+        // Return the newly appended id uri
+        return returnUri;
     }
 }

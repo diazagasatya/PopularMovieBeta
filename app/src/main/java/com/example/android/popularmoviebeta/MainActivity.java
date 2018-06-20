@@ -325,6 +325,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                         .PopularMovie.buildUriWithIdPopular(idNumber);
 
                 // Adding the URI to the intent
+                // Pass in the idNumber which correspond to the row id in the table
+                // for adding the movie to favorites if need be
                 movieDetailIntent.setData(moviePopularDetailInformation);
                 movieDetailIntent.putExtra(TABLE_IDENTIFICATION, tableId);
 
