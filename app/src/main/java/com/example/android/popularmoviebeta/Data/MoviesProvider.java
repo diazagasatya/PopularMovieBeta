@@ -294,17 +294,68 @@ public class MoviesProvider extends ContentProvider {
 
         // Use switch statement to run the appropriate SQL query to the database
         switch(sUriMatcher.match(uri)) {
+
+            // Deleting the whole popular table
             case POPULAR_PATH:
                 numberOfRowsDeleted = mMoviesDatabase.getWritableDatabase()
                         .delete(MoviesContract.PopularMovie.TABLE_NAME,
                                 selection,
                                 selectionArgs);
                 break;
+
+            // Deleting the whole top rated table
             case HIGHEST_RATED_PATH:
                 numberOfRowsDeleted = mMoviesDatabase.getWritableDatabase()
                         .delete(MoviesContract.HighestRatedMovie.TABLE_NAME,
                                 selection,
                                 selectionArgs);
+                break;
+
+            // Deleting the whole favorite table
+            case FAVORITE_PATH:
+                numberOfRowsDeleted = mMoviesDatabase.getWritableDatabase()
+                        .delete(MoviesContract.FavoriteMovies.TABLE_NAME,
+                                selection,
+                                selectionArgs);
+                break;
+
+            // Deleting a single row in popular table
+            case POPULAR_PATH_WITH_ID:
+
+                // Get the task ID from the URI path
+                String id = uri.getPathSegments().get(1);
+
+                // Use selections/selectionArgs to filter for this ID
+                numberOfRowsDeleted = mMoviesDatabase.getWritableDatabase()
+                        .delete(MoviesContract.PopularMovie.TABLE_NAME,
+                                "_id=?",
+                                new String[] {id});
+                break;
+
+            // Deleting a single row in popular table
+            case HIGHEST_RATED_WITH_ID:
+
+                // Get the task ID from the URI path
+                String idTop = uri.getPathSegments().get(1);
+
+                // Use selections/selectionArgs to filter for this ID
+                numberOfRowsDeleted = mMoviesDatabase.getWritableDatabase()
+                        .delete(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                                "_id=?",
+                                new String[] {idTop});
+                break;
+
+            // Deleting a single row in popular table
+            case FAVORITE_PATH_WITH_ID:
+
+                // Get the task ID from the URI path
+                String idFav = uri.getPathSegments().get(1);
+
+                // Use selections/selectionArgs to filter for this ID
+                numberOfRowsDeleted = mMoviesDatabase.getWritableDatabase()
+                        .delete(MoviesContract.FavoriteMovies.TABLE_NAME,
+                                "_id=?",
+                                new String[] {idFav});
                 break;
 
             default:

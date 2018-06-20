@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.CursorLoader;
@@ -90,6 +91,7 @@ public class DetailActivity extends AppCompatActivity
 
     // Table identification for detail activity
     public static final String TABLE_IDENTIFICATION = "table_identification";
+    public static final String TABLE_KEY = "table_id";
 
     // Trailers Adapter
     private TrailersAdapter mTrailerAdapter;
@@ -108,6 +110,9 @@ public class DetailActivity extends AppCompatActivity
 
     // Cursor with the data of this movie
     private Cursor nMovieData;
+
+    // Table identification
+    private int tableIdentification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +166,13 @@ public class DetailActivity extends AppCompatActivity
 
         // Retrieve the URI build from intent
         mUri = getIntent().getData();
-        int tableIdentification = getIntent().getIntExtra(TABLE_IDENTIFICATION, 0);
+
+        // Grab the appropriate table id if temporarily destroyed
+        if(savedInstanceState != null) {
+            tableIdentification = savedInstanceState.getInt(TABLE_KEY);
+        } else {
+            tableIdentification = getIntent().getIntExtra(TABLE_IDENTIFICATION, 0);
+        }
 
         // URI can't be null in detail activity
         if (mUri == null || tableIdentification == 0)
@@ -183,6 +194,12 @@ public class DetailActivity extends AppCompatActivity
                         this);
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(TABLE_KEY, tableIdentification);
+        super.onSaveInstanceState(outState);
     }
 
     /**
@@ -382,22 +399,65 @@ public class DetailActivity extends AppCompatActivity
     /**
      * This method is linked with the button add to favorites.
      * This will insert the movie clicked to the favorites table
+     * This will delete the movie clicked if already added to favorite table
      * @param view
      */
     public void addToFavorites(View view) {
+
+        String movieId = "N/A";
+        Toast toastValidation;
 
         // Check first if data is completely loaded
         if(nMovieData.getCount() == 0) {
             return;
         }
 
-        // Call add movie if clicked
-        addMovie();
+        // Get the Movie ID from favorite table
+        final String[] STRING_PROJECTION = {
+                MoviesContract.FavoriteMovies.COL_MOVIE_ID
+        };
 
-        // Show a toast that insertion to favorite table is successful
-        Toast successInsertion = Toast.makeText(this,
-                "Added to Favorite List!",Toast.LENGTH_LONG);
-        successInsertion.show();
+        // Try grabbing the movie ID
+        try {
+
+            String selectionArgs = nMovieData.getString(INDEX_MOVIE_ID);
+
+            // Check if the Data is already present in table, if so delete if not add
+            ContentResolver contentResolver = getContentResolver();
+            Cursor cursorCheck = contentResolver.query(
+                    MoviesContract.FavoriteMovies.CONTENT_URI
+                    ,STRING_PROJECTION
+                    , MoviesContract.FavoriteMovies.COL_MOVIE_ID + "=?"
+                    ,new String[] {selectionArgs}
+                    ,null);
+
+            cursorCheck.moveToFirst();
+            movieId = cursorCheck.getString(0);
+            cursorCheck.close();
+
+        } catch (Exception e) {
+            Log.v("CURSOR: ", "Cursor is empty");
+        }
+
+        // Check if the Movie already in table
+        if(movieId.equals(nMovieData.getString(INDEX_MOVIE_ID))) {
+
+            // delete movie in the favorite table
+            deleteMovie(movieId);
+            // Show a toast that insertion to favorite table is successful
+            toastValidation = Toast.makeText(this,
+                    "Deleted from the Favorite List!",Toast.LENGTH_LONG);
+            toastValidation.show();
+
+        } else {
+
+            // Add movie if movie is not in favorite table
+            addMovie();
+            // Show a toast that insertion to favorite table is successful
+            toastValidation = Toast.makeText(this,
+                    "Added to Favorite List!",Toast.LENGTH_LONG);
+            toastValidation.show();
+        }
     }
 
 
@@ -436,5 +496,22 @@ public class DetailActivity extends AppCompatActivity
 
         // Print out the uri for debugging purposes
         Log.v("Insertion Confirmation", movieAddedUriWithId.toString());
+    }
+
+    /**
+     * This function will delete the movie clicked in the favorite list
+     */
+    public void deleteMovie(String movieIdentification) {
+
+        // Get the context content resolver
+        ContentResolver contentResolverDelete = getContentResolver();
+
+        // Delete the movie in the favorite table
+        int deletedRow = contentResolverDelete.delete(MoviesContract.FavoriteMovies.CONTENT_URI
+                ,MoviesContract.FavoriteMovies.COL_MOVIE_ID + "=?"
+                ,new String[] {movieIdentification});
+
+        // Print out the number of deletion for debugging purposes
+        Log.v("Deletion Confirmation ", Integer.toString(deletedRow));
     }
 }

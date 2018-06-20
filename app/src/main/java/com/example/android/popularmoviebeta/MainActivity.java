@@ -420,10 +420,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
 
             case ID_USER_FAVORITE_MOVIE_LOADER:
 
-                // Grab Movies ID from table
-                Uri favoriteMovieUri = MoviesContract.FavoriteMovies.CONTENT_URI;
-                String movieIdFavorite = grabMovieId(favoriteMovieUri, tableId, idNumber);
-
                 // No need to sync review or trailers
                 // Grab the specific movie and set the data of the intent
                 Uri movieFavoriteDetailInformation = MoviesContract
