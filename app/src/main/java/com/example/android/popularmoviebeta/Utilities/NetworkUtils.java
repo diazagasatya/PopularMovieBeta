@@ -21,7 +21,7 @@ public class NetworkUtils {
     // This API Key can be obtained by registering to https://developers.themoviedb.org
 
     // TODO (1) PLEASE ENTER YOUR MOVIE DB API_KEY HERE
-    private static final String API_KEY = "546ac5863d9083b1cf9d85daabc5446a";
+    private static final String API_KEY = "";
 
     /* API URL FORMATTING */
     private static final String VERSION = "3"; // Current API version available
