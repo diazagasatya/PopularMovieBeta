@@ -3,6 +3,8 @@ package com.example.android.popularmoviebeta;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Movie;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -26,7 +28,6 @@ import com.example.android.popularmoviebeta.Data.MoviesProvider;
 import com.example.android.popularmoviebeta.Sync.MoviesSyncTask;
 
 
-
 public class MainActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener,
@@ -46,6 +47,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
     // Use a integer id for loading Movie data from API
     private static final int ID_POPULAR_MOVIE_LOADER = 100;
     private static final int ID_TOP_RATED_MOVIE_LOADER = 200;
+    private static final int ID_USER_FAVORITE_MOVIE_LOADER = 300;
 
     // Use for reference in adapter
     public static int tableId = ID_POPULAR_MOVIE_LOADER;
@@ -59,9 +61,14 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
             MoviesContract.HighestRatedMovie.COL_MOVIE_POSTER,
             MoviesContract.HighestRatedMovie.COL_ORIGINAL_TITLE
     };
+    public static final String[] USER_FAVORITE_MOVIE_PROJECTION = {
+            MoviesContract.FavoriteMovies.COL_MOVIE_POSTER,
+            MoviesContract.FavoriteMovies.COL_ORIGINAL_TITLE
+    };
 
     // Table identification for detail activity
     public static final String TABLE_IDENTIFICATION = "table_identification";
+    public static final String TABLE_ID_KEY = "saved_table_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +107,28 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         super.onResume();
     }
 
+    /**
+     * Restore the table identification it was in before to load the correct table
+     * @param savedInstanceState        Saved State before temporarily destroyed
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        tableId = savedInstanceState.getInt(TABLE_ID_KEY);
+    }
+
+    /**
+     * When activity may be temporarily destroyed, if user click home/square button
+     * @param outState                  Saving current state
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // Store the current tableId for loading the correct table
+        outState.putInt(TABLE_ID_KEY, tableId);
+
+        // Call the super class to save the view hierarchy
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -117,8 +146,21 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
         // Get the default shared preference
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // The default loader will be loading the popular movie from database
-        getSupportLoaderManager().initLoader(ID_POPULAR_MOVIE_LOADER, null, this);
+        // Load the appropriate table based upon lifecycle
+        switch(tableId) {
+            case ID_POPULAR_MOVIE_LOADER:
+                getSupportLoaderManager().initLoader(ID_POPULAR_MOVIE_LOADER, null, this);
+                break;
+            case ID_TOP_RATED_MOVIE_LOADER:
+                getSupportLoaderManager().initLoader(ID_TOP_RATED_MOVIE_LOADER, null, this);
+                break;
+            case ID_USER_FAVORITE_MOVIE_LOADER:
+                getSupportLoaderManager().initLoader(ID_USER_FAVORITE_MOVIE_LOADER, null, this);
+                break;
+            default:
+                getSupportLoaderManager().initLoader(ID_POPULAR_MOVIE_LOADER, null, this);
+                break;
+        }
 
         // Register the shared preference listener to change Loader id if necessary
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -136,7 +178,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 
-        if(loaderId == ID_POPULAR_MOVIE_LOADER) {
+        if (loaderId == ID_POPULAR_MOVIE_LOADER) {
 
             // Get the popular movie content URI from contract
             Uri popularMovieUri = MoviesContract.PopularMovie.CONTENT_URI;
@@ -159,6 +201,19 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                     null,
                     null,
                     null);
+
+        } else if(loaderId == ID_USER_FAVORITE_MOVIE_LOADER) {
+
+            // Get the favorite movie content URI from contract
+            Uri favoriteMovieUri = MoviesContract.FavoriteMovies.CONTENT_URI;
+
+            return new CursorLoader(this,
+                    favoriteMovieUri,
+                    USER_FAVORITE_MOVIE_PROJECTION,
+                    null,
+                    null,
+                    null);
+
         } else {
             throw new RuntimeException("Loader not implemented " + loaderId);
         }
@@ -250,7 +305,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
 
         String sortByPopularity = getResources().getStringArray(R.array.sort_by_values)[0];
         String sortByRating = getResources().getStringArray(R.array.sort_by_values)[1];
-
+        String sortByFavorites = getResources().getStringArray(R.array.sort_by_values)[2];
 
         // Check which preference have changed from the String value
         if (key.equals(getString(R.string.sort_by_key))) {
@@ -269,9 +324,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                 // Set the popular table id to notify adapter
                 tableId = ID_POPULAR_MOVIE_LOADER;
 
-                // Set the top rated table to notify adapter
-                // MoviesSyncTask.syncPopularMovies(this);
-
+                // Set the popular table to notify adapter
                 getSupportLoaderManager()
                         .restartLoader(ID_POPULAR_MOVIE_LOADER, null, this);
 
@@ -282,11 +335,19 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                 tableId = ID_TOP_RATED_MOVIE_LOADER;
 
                 // Set the top rated table to notify adapter
-                // MoviesSyncTask.syncTopRatedMovies(this);
-
                 getSupportLoaderManager()
                         .restartLoader(ID_TOP_RATED_MOVIE_LOADER, null, this);
+
+            } else if (clickedSortingPreference.equals(sortByFavorites)) {
+
+                // Set the favorite loader ID based upon preference changed
+                tableId = ID_USER_FAVORITE_MOVIE_LOADER;
+
+                // Set the favorite table to notify adapter
+                getSupportLoaderManager()
+                        .restartLoader(ID_USER_FAVORITE_MOVIE_LOADER, null, this);
             }
+
         } else {
             System.out.println("not equal");
         }
@@ -350,6 +411,26 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
 
                 // Adding the URI to the intent
                 movieDetailIntent.setData(movieHighestRatedDetailInformation);
+                movieDetailIntent.putExtra(TABLE_IDENTIFICATION, tableId);
+
+                // Start the activity
+                startActivity(movieDetailIntent);
+
+                break;
+
+            case ID_USER_FAVORITE_MOVIE_LOADER:
+
+                // Grab Movies ID from table
+                Uri favoriteMovieUri = MoviesContract.FavoriteMovies.CONTENT_URI;
+                String movieIdFavorite = grabMovieId(favoriteMovieUri, tableId, idNumber);
+
+                // No need to sync review or trailers
+                // Grab the specific movie and set the data of the intent
+                Uri movieFavoriteDetailInformation = MoviesContract
+                        .FavoriteMovies.buildUriWithIdFavorites(idNumber);
+
+                // Adding the Uri to the intent
+                movieDetailIntent.setData(movieFavoriteDetailInformation);
                 movieDetailIntent.putExtra(TABLE_IDENTIFICATION, tableId);
 
                 // Start the activity
@@ -438,6 +519,39 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
                     throw new NullPointerException(e.getMessage());
                 }
                 return movieIdTopRated;
+
+            case ID_USER_FAVORITE_MOVIE_LOADER:
+
+                // Get the Movie ID from highest rated table
+                String[] STRING_FAVORITE_PROJECTION = {
+                        MoviesContract.FavoriteMovies.COL_MOVIE_ID
+                };
+
+                // Grab the movie Id using Query method in Content Resolver
+                ContentResolver contentFavResolver = getContentResolver();
+                Cursor cursorFavorite = contentFavResolver.
+                        query(uri,STRING_FAVORITE_PROJECTION,null,null,null);
+
+                String movieIdFavorite;
+
+                // Grab the Movie Id
+                try {
+
+                    // Move the cursor to the clicked movie
+                    cursorFavorite.moveToPosition(rowId);
+
+                    movieIdFavorite = cursorFavorite.getString(cursorFavorite.
+                            getColumnIndex(MoviesContract.FavoriteMovies.COL_MOVIE_ID));
+
+                    cursorFavorite.close();
+
+                } catch (Exception e) {
+
+                    Log.v("Movie Id", "Column Index is not available / cursor is null");
+
+                    throw new NullPointerException(e.getMessage());
+                }
+                return movieIdFavorite;
 
             default:
 

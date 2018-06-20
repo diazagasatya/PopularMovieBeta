@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.popularmoviebeta.MainActivity"
-    android:id="@+id/rv_movies">
+    android:id="@+id/rv_movies"
+    android:background="#000000">
 
 </android.support.v7.widget.RecyclerView>

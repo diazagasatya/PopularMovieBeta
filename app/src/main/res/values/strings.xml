@@ -16,12 +16,14 @@
     <string-array name="sort_by_list">
         <item>Popularity</item>
         <item>Highest Rating</item>
+        <item>Favorites</item>
     </string-array>
 
     <!-- The entry values that will be saved for preference -->
     <string-array name="sort_by_values">
         <item>popular</item>
         <item>top_rated</item>
+        <item>favorites</item>
     </string-array>
 
     <string name="sort_by_summary">Show Movies Based On Sorting Preference</string>

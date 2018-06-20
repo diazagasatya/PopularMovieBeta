@@ -52,6 +52,16 @@ public class DetailActivity extends AppCompatActivity
             MoviesContract.HighestRatedMovie.COL_TRAILERS,
             MoviesContract.HighestRatedMovie.COL_REVIEW
     };
+    public static final String[] FAVORITE_PROJECTION = {
+            MoviesContract.FavoriteMovies.COL_ORIGINAL_TITLE,
+            MoviesContract.FavoriteMovies.COL_MOVIE_POSTER,
+            MoviesContract.FavoriteMovies.COL_MOVIE_SYNOPSIS,
+            MoviesContract.FavoriteMovies.COL_RATINGS,
+            MoviesContract.FavoriteMovies.COL_RELEASE_DATE,
+            MoviesContract.FavoriteMovies.COL_MOVIE_ID,
+            MoviesContract.FavoriteMovies.COL_TRAILERS,
+            MoviesContract.FavoriteMovies.COL_REVIEW
+    };
 
     // This indices should match the projection above to retrieve data
     public static final int INDEX_ORIGINAL_TITLE = 0;
@@ -76,6 +86,7 @@ public class DetailActivity extends AppCompatActivity
     // Create an ID for loader
     public static final int ID_LOADER_DETAIL_POPULAR_INFORMATION = 100;
     public static final int ID_LOADER_DETAIL_HIGHEST_RATED_INFORMATION = 200;
+    public static final int ID_LOADER_DETAIL_FAVORITE_INFORMATION = 300;
 
     // Table identification for detail activity
     public static final String TABLE_IDENTIFICATION = "table_identification";
@@ -167,6 +178,10 @@ public class DetailActivity extends AppCompatActivity
                 getSupportLoaderManager().initLoader(ID_LOADER_DETAIL_HIGHEST_RATED_INFORMATION, null,
                         this);
                 break;
+            case ID_LOADER_DETAIL_FAVORITE_INFORMATION:
+                getSupportLoaderManager().initLoader(ID_LOADER_DETAIL_FAVORITE_INFORMATION, null,
+                        this);
+                break;
         }
     }
 
@@ -197,6 +212,15 @@ public class DetailActivity extends AppCompatActivity
                         null,
                         null,
                         null);
+
+            case ID_LOADER_DETAIL_FAVORITE_INFORMATION:
+                return new CursorLoader(this,
+                        mUri,
+                        FAVORITE_PROJECTION,
+                        null,
+                        null,
+                        null);
+
             default:
                 throw new RuntimeException("Loader not implemented: " + id);
         }

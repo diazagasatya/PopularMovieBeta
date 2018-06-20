@@ -34,6 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
         // Get the item id and navigate to the appropriate activity
         int itemId = item.getItemId();
 
+        // If home button was clicked to go back
         if(itemId == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }

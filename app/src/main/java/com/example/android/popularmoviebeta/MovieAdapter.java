@@ -22,6 +22,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private final Context mContext;
     private static final int POPULAR_TABLE = 100;
     private static final int TOP_RATED_TABLE = 200;
+    private static final int FAVORITE_TABLE = 300;
     private int tableIdentification;
 
     // Bind data with the cursor returned from query
@@ -130,6 +131,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
                 break;
 
+            case FAVORITE_TABLE:
+
+                // Grab the image url and movie title
+                imageUrl = mCursor.getString(mCursor
+                        .getColumnIndex(MoviesContract.FavoriteMovies.COL_MOVIE_POSTER));
+
+                movieTitle = mCursor.getString(mCursor
+                        .getColumnIndex(MoviesContract.FavoriteMovies.COL_ORIGINAL_TITLE));
+
+                break;
         }
 
         // Bind the image url and the title

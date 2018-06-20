@@ -171,13 +171,17 @@ public class MoviesSyncTask {
                                             MoviesContract.PopularMovie.COL_MOVIE_ID + "=?",
                                             new String[] {movieId});
 
-                            /*
-                             * Update the Review columns with the values
-                             */
-                            popularContentResolver.update(MoviesContract.PopularMovie.CONTENT_URI,
-                                    reviewValues,
-                                    MoviesContract.PopularMovie.COL_MOVIE_ID + "=?",
-                                    new String[] {movieId});
+                            // Make sure the review values is not null
+                            if(reviewValues != null) {
+                                /*
+                                 * Update the Review columns with the values
+                                 */
+                                popularContentResolver.
+                                        update(MoviesContract.PopularMovie.CONTENT_URI,
+                                        reviewValues,
+                                        MoviesContract.PopularMovie.COL_MOVIE_ID + "=?",
+                                        new String[] {movieId});
+                            }
                         }
                         break;
 
@@ -198,13 +202,17 @@ public class MoviesSyncTask {
                                             MoviesContract.HighestRatedMovie.COL_MOVIE_ID + "=?",
                                             new String[] {movieId});
 
-                            /*
-                             * Update the Review columns with the values
-                             */
-                            highestRatedContentResolver.update(MoviesContract.HighestRatedMovie.CONTENT_URI,
-                                    reviewValues,
-                                    MoviesContract.HighestRatedMovie.COL_MOVIE_ID + "=?",
-                                    new String[] {movieId});
+                            // Make sure the review values is not null
+                            if(reviewValues != null) {
+                                /*
+                                 * Update the Review columns with the values
+                                 */
+                                highestRatedContentResolver.update(MoviesContract
+                                                .HighestRatedMovie.CONTENT_URI,
+                                        reviewValues,
+                                        MoviesContract.HighestRatedMovie.COL_MOVIE_ID + "=?",
+                                        new String[] {movieId});
+                            }
                         }
                         break;
                 }

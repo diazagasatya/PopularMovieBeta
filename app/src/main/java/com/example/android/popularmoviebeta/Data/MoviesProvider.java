@@ -122,10 +122,24 @@ public class MoviesProvider extends ContentProvider {
                         sortOrder);
                 break;
 
-            // CASE 3 FOR A SINGLE MOVIE IN POPULAR TABLE
+            // CASE 3 FOR ALL ROWS IN THE FAVORITE TABLE
+            case FAVORITE_PATH:
+
+                // Retrieve the movie
+                resultCursor = db.query(MoviesContract.FavoriteMovies.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+
+            // CASE 4 FOR A SINGLE MOVIE IN POPULAR TABLE
             case POPULAR_PATH_WITH_ID:
 
-                // Retrieve the full Popular Movie table
+                // Retrieve the movie
                 resultCursor = db.query(MoviesContract.PopularMovie.TABLE_NAME,
                         projection,
                         selection,
@@ -135,11 +149,24 @@ public class MoviesProvider extends ContentProvider {
                         sortOrder);
                 break;
 
-            // CASE 3 FOR A SINGLE MOVIE IN POPULAR TABLE
+            // CASE 5 FOR A SINGLE MOVIE IN POPULAR TABLE
             case HIGHEST_RATED_WITH_ID:
 
-                // Retrieve the full Popular Movie table
+                // Retrieve the movie
                 resultCursor = db.query(MoviesContract.HighestRatedMovie.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            // CASE 6 FOR A SINGLE MOVIE IN FAVORITE TABLE
+            case FAVORITE_PATH_WITH_ID:
+
+                // Retrieve the movie
+                resultCursor = db.query(MoviesContract.FavoriteMovies.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
