@@ -69,6 +69,10 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
     // Table identification for detail activity
     public static final String TABLE_IDENTIFICATION = "table_identification";
     public static final String TABLE_ID_KEY = "saved_table_id";
+    public static final String SCROLL_POSITION_KEY = "saved_scroll_position";
+
+    // Scroll position saved
+    private int mScrollPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +118,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         tableId = savedInstanceState.getInt(TABLE_ID_KEY);
+        mScrollPosition = savedInstanceState.getInt(SCROLL_POSITION_KEY);
+        mMovieList.scrollToPosition(mScrollPosition);
     }
 
     /**
@@ -124,6 +130,18 @@ implements LoaderManager.LoaderCallbacks<Cursor>,
     public void onSaveInstanceState(Bundle outState) {
         // Store the current tableId for loading the correct table
         outState.putInt(TABLE_ID_KEY, tableId);
+
+        // Get Layout Manager
+        RecyclerView.LayoutManager layoutManager = mMovieList.getLayoutManager();
+        if(layoutManager != null && layoutManager instanceof GridLayoutManager) {
+            // Save current visible position
+            mScrollPosition = ((GridLayoutManager)layoutManager).findFirstVisibleItemPosition();
+        }
+
+        // If scroll position is not 0
+        if(mScrollPosition != 0) {
+            outState.putInt(SCROLL_POSITION_KEY, mScrollPosition);
+        }
 
         // Call the super class to save the view hierarchy
         super.onSaveInstanceState(outState);

@@ -20,6 +20,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,6 +93,7 @@ public class DetailActivity extends AppCompatActivity
     // Table identification for detail activity
     public static final String TABLE_IDENTIFICATION = "table_identification";
     public static final String TABLE_KEY = "table_id";
+    public static final String SCROLL_POSITION_KEY = "scroll_position";
 
     // Trailers Adapter
     private TrailersAdapter mTrailerAdapter;
@@ -113,6 +115,9 @@ public class DetailActivity extends AppCompatActivity
 
     // Table identification
     private int tableIdentification;
+
+    // Get reference of current scroll view
+    private ScrollView mScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +162,8 @@ public class DetailActivity extends AppCompatActivity
          * Essential information for the detail activity UI
          */
         // Reference the text views with the views in activity_detail
+        // Get reference of the scroll view
+        mScrollView = findViewById(R.id.scroll_view);
         mOriginalTitle = findViewById(R.id.tv_movie_title);
         mMoviePoster = findViewById(R.id.iv_movie_poster);
         mMovieSynopsis = findViewById(R.id.tv_movie_synopsis);
@@ -197,8 +204,28 @@ public class DetailActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Grab the scroll position
+        final int[] scrollPosition = savedInstanceState
+                .getIntArray(SCROLL_POSITION_KEY);
+
+        // Check whether scroll position is not null
+        if(scrollPosition != null) {
+            mScrollView.scrollTo(scrollPosition[0],scrollPosition[1]);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(TABLE_KEY, tableIdentification);
+
+        // Save the X and Y value of current scroll view position
+        outState.putIntArray(SCROLL_POSITION_KEY,
+                new int[] {mScrollView.getScrollX()
+                        , mScrollView.getScrollY()});
+
         super.onSaveInstanceState(outState);
     }
 
